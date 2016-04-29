@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseRegionMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.base.BaseRegion" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pId" property="pId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="regionLevel" property="regionLevel" jdbcType="TINYINT" />
+    <result column="hasStore" property="hasStore" jdbcType="BIT" />
+    <result column="isDelete" property="isDelete" jdbcType="BIT" />
+    <result column="clik" property="clik" jdbcType="INTEGER" />
+    <result column="storeIds" property="storeIds" jdbcType="VARCHAR" />
+    <result column="updateTimeStamp" property="updateTimeStamp" jdbcType="TIMESTAMP" />
+    <result column="createTime" property="createTime" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, pId, name, regionLevel, hasStore, isDelete, clik, storeIds, updateTimeStamp, 
+    createTime
+  </sql>
+  
+  <select id="getRegionCodeList" resultType="com.zjjf.analysis.beans.analysis.base.AnaDictionary" parameterType="java.util.Map">
+    select t1.id as "code", t1.name, t2.isCheck from base_region t1 left join base_user_level t2  on t2.dataId = t1.id 
+    	where t1.regionLevel = #{regionLevel} and t1.pid = #{pid}
+  </select>
+  
+  <select id="getAreaByCityId" resultType="com.zjjf.analysis.beans.analysis.base.AnaDictionary" parameterType="java.util.Map">
+    select distinct t1.id as "code", t1.name, t2.isCheck from base_region t1 
+    left join 
+    (select dataId, isCheck from base_user_level 
+	    <where>
+	    	<if test="roleUserId != null and roleUserId != '' and roleUserId != 0 " >
+	      	  and `roleUserId` = #{roleUserId}
+	        </if>
+	    </where>
+    ) t2 on t2.dataId = t1.id where t1.regionLevel = #{regionLevel} and t1.pid = #{cityId}
+  </select>
+</mapper>

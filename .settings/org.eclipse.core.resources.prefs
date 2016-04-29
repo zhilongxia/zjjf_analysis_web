@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+encoding//src/main/java=utf8
+encoding//src/main/java/com/zjjf/analysis/controller/authority/AuthorityRoleController.java=GBK
+encoding//src/main/java/com/zjjf/analysis/controller/authority/AuthorityUserController.java=GBK
+encoding//src/main/java/com/zjjf/analysis/controller/basecore/BaseCoreController.java=GBK
+encoding//src/main/java/com/zjjf/analysis/controller/login/LoginController.java=UTF-8
+encoding//src/main/java/com/zjjf/analysis/controller/sporder/SpOrderController.java=GBK
+encoding//src/main/resources/generatorConfig.xml=UTF-8
+encoding//src/main/webapp/WEB-INF/view/common/nav.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/view/main.jsp=UTF-8
+encoding//src/test/java=utf8
+encoding/<project>=UTF-8

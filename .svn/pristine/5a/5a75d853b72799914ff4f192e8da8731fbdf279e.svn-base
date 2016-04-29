@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseUserLevelMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.base.BaseUserLevel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="roleId" property="roleId" jdbcType="INTEGER" />
+    <result column="dataId" property="dataId" jdbcType="INTEGER" />
+    <result column="isCheck" property="isCheck" jdbcType="INTEGER" />
+    <result column="roleUserId" property="roleUserId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, level, roleId, dataId, isCheck, roleUserId
+  </sql>
+
+  <insert id="insert" parameterType="com.zjjf.analysis.beans.analysis.base.BaseUserLevel" >
+    insert into base_user_level (id, level, roleId, 
+      dataId, isCheck, roleUserId
+      )
+    values (#{id,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
+      #{dataId,jdbcType=INTEGER}, #{isCheck,jdbcType=INTEGER}, #{roleUserId,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <delete id="deleteByParamMap" parameterType="java.util.Map" >
+    delete from base_user_level where roleId = #{roleId} and roleUserId = #{roleUserId}
+  </delete>
+  
+   <delete id="deleteByroleUserId" parameterType="java.lang.String" >
+    delete from base_user_level where  roleUserId = #{roleUserId}
+  </delete>
+  
+  <select id="getDataBy_roleUserId_roleId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select <include refid="Base_Column_List" /> from base_user_level where roleId = #{roleId} and roleUserId =#{roleUserId}
+  </select>
+</mapper>

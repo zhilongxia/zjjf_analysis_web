@@ -1,0 +1,60 @@
+package com.zjjf.analysis.services.authority;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseRole;
+import com.zjjf.analysis.beans.analysis.base.BaseRoleData;
+import com.zjjf.analysis.common.constants.Constants;
+import com.zjjf.analysis.mapper.analysis.BaseRoleDataMapper;
+
+@Service
+public class AuthorityDataServcie extends BaseRoleServcie {
+
+	@Autowired
+	private BaseRoleDataMapper baseRoleDataMapper;
+
+	/**
+	 * 获取权限字段
+	 * 
+	 * @param paramMap
+	 */
+	public Object[][] getAuthorityFilter(String userId, Integer menuId, String[][] tableView) {
+
+		List<BaseRole> roleList = getBaseRoleByUserId(userId);
+		String roleIds = "(";
+		for (BaseRole baseRole : roleList) {
+			roleIds += baseRole.getId() + ",";
+		}
+		HashMap<String, Object> dataParam = new HashMap<String, Object>();
+		dataParam.put("menuId", menuId);
+		dataParam.put("roleIds", roleIds.substring(0, roleIds.length() - 1) + ")");
+		dataParam.put("isChecked", 1);
+		List<BaseRoleData> baseRoleDataList = baseRoleDataMapper.getAuthorityData(dataParam);
+		if (baseRoleDataList == null || baseRoleDataList.size() == 0) {
+			return new Object[][] {};
+		}
+		return orderBy_view(baseRoleDataList, tableView);
+	}
+
+	private Object[][] orderBy_view(List<BaseRoleData> baseRoleDataList, String[][] tableView) {
+
+		Object[][] authorityArray = new Object[baseRoleDataList.size()][2];
+		int k = 0;
+		for (int i = 0; i < tableView.length; i++) {
+			String[] viewKey = tableView[i];
+			for (BaseRoleData bean : baseRoleDataList) {
+				String key = bean.getAuthkey();
+				if (viewKey != null && viewKey[0].equals(key)) {
+					authorityArray[k][0] = Constants.authority_query + viewKey[0];
+					authorityArray[k][1] = viewKey[1];
+					k++;
+				}
+			}
+		}
+		return authorityArray;
+	}
+}

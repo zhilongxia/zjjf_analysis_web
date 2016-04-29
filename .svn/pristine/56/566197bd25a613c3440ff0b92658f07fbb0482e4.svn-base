@@ -1,0 +1,17 @@
+package com.zjjf.analysis.mapper.analysis;
+
+import com.zjjf.analysis.beans.analysis.base.BaseRoleDataTemplate;
+
+public interface BaseRoleDataTemplateMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(BaseRoleDataTemplate record);
+
+    int insertSelective(BaseRoleDataTemplate record);
+
+    BaseRoleDataTemplate selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(BaseRoleDataTemplate record);
+
+    int updateByPrimaryKey(BaseRoleDataTemplate record);
+}

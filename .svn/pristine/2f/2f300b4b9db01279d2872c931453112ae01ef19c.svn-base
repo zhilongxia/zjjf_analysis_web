@@ -1,0 +1,33 @@
+package com.zjjf.analysis.services.authority;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.base.BaseRoleAuth;
+import com.zjjf.analysis.mapper.analysis.BaseRoleAuthMapper;
+
+@Service
+public class BaseRoleAuthService {
+
+	private Integer roleAuthId = 1;
+
+	@Autowired
+	private BaseRoleAuthMapper baseRoleAuthMapper;
+
+	@Autowired
+	private BaseMenuAuthService baseMenuAuthService;
+
+	public void deleteByRoleId(Integer roleId) {
+
+		baseRoleAuthMapper.deleteByRoleId(roleId);
+	}
+
+	public void add_base_role_auth(Integer menuId, Integer roleId) {
+
+		BaseRoleAuth baseRoleAuth = new BaseRoleAuth();
+		baseRoleAuth.setMenuAuthId(baseMenuAuthService.getAuthMenuId(roleAuthId, Integer.valueOf(menuId)));
+		baseRoleAuth.setRoleId(roleId);
+		baseRoleAuthMapper.insert(baseRoleAuth);
+	}
+
+}

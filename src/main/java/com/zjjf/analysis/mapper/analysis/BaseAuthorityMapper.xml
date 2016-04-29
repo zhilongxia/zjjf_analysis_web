@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseAuthorityMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.authority.BaseAuthority" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="authString" property="authString" jdbcType="VARCHAR" />
+    <result column="authName" property="authName" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="action" property="action" jdbcType="VARCHAR" />
+    <result column="ordId" property="ordId" jdbcType="INTEGER" />
+    <result column="upId" property="upId" jdbcType="VARCHAR" />
+    <result column="roleRemark" property="roleRemark" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="position" property="position" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    
+    <result column="roleNo" property="roleNo" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, authName, icon, action, ordId, upId, roleRemark, createTime, createUser, 
+    position, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_authority
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from base_authority
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseAuthority" >
+    insert into base_authority (id, authName, 
+      icon, action, ordId, 
+      upId, roleRemark, createTime, 
+      createUser, position, status
+      )
+    values (#{id,jdbcType=INTEGER}, #{authName,jdbcType=VARCHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{action,jdbcType=VARCHAR}, #{ordId,jdbcType=INTEGER}, 
+      #{upId,jdbcType=VARCHAR}, #{roleRemark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{position,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseAuthority" >
+    insert into base_authority
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="authName != null" >
+        authName,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="action != null" >
+        action,
+      </if>
+      <if test="ordId != null" >
+        ordId,
+      </if>
+      <if test="upId != null" >
+        upId,
+      </if>
+      <if test="roleRemark != null" >
+        roleRemark,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="authName != null" >
+        #{authName,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="action != null" >
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="ordId != null" >
+        #{ordId,jdbcType=INTEGER},
+      </if>
+      <if test="upId != null" >
+        #{upId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleRemark != null" >
+        #{roleRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseAuthority" >
+    update base_authority
+    <set >
+      <if test="authName != null" >
+        authName = #{authName,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="action != null" >
+        action = #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="ordId != null" >
+        ordId = #{ordId,jdbcType=INTEGER},
+      </if>
+      <if test="upId != null" >
+        upId = #{upId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleRemark != null" >
+        roleRemark = #{roleRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        position = #{position,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseAuthority" >
+    update base_authority
+    set
+      authName = #{authName,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      action = #{action,jdbcType=VARCHAR},
+      ordId = #{ordId,jdbcType=INTEGER},
+      upId = #{upId,jdbcType=VARCHAR},
+      roleRemark = #{roleRemark,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      position = #{position,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+   <select id="getAuthorityByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	  select distinct  
+  	      t3.id,
+  		  t3.authString, 
+  		  t3.authName,
+  		  t2.`roleName`,
+ 		  t2.`roleNo`
+  		  from base_role_auth t1 
+		  inner join `base_role` t2 on t2.id = t1.roleId
+		  inner join `base_auth_menu` t4 on t1.`menuAuthId` = t4.`id`
+		  inner join `base_authority` t3 on t3.`id` = t4.`authId`
+		  inner join `base_role_user` t5 on t2.`id` = t5.`roleId`
+		where t5.userId = #{userId}
+  </select>
+</mapper>

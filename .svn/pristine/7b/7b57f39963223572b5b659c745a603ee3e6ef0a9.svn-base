@@ -1,0 +1,190 @@
+package com.zjjf.analysis.services.authority;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseRole;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+@Service
+public class AuthorityRoleService {
+
+	@Autowired
+	private BaseRoleService baseRoleService;
+
+	@Autowired
+	private BaseMenuService baseMenuService;
+
+	@Autowired
+	private BaseRoleDataService baseRoleDataService;
+
+	@Autowired
+	private BaseRoleAuthService baseRoleAuthService;
+
+	/**
+	 * 1.删除base_role 2.删除base_role_auth 3.删除base_role_data
+	 * 
+	 * @param roleId
+	 */
+	/* @Transactional(propagation = Propagation.SUPPORTS, readOnly = true) */
+	public void deleteRole(Integer roleId) {
+
+		baseRoleService.deleteById(roleId);
+		baseRoleAuthService.deleteByRoleId(roleId);
+		baseRoleDataService.deleteByRoleId(roleId);
+	}
+
+	/* @Transactional(propagation = Propagation.SUPPORTS, readOnly = true) */
+	public void saveRoleInfo(Integer id, String roleName, String creater, String selectionTotal, Integer level) {
+
+		assert (selectionTotal) != null;
+		if (id != null && id != 0) {
+			updateRole(id, roleName, creater, JSONArray.fromObject(selectionTotal), level);
+		} else {
+			addRole(roleName, creater, JSONArray.fromObject(selectionTotal), level);
+		}
+	}
+
+	public Integer getTotalCount() {
+
+		return baseRoleService.getTotalCount();
+	}
+
+	public List<BaseRole> getRoleList() {
+
+		return baseRoleService.getAllRole();
+	}
+
+	/**
+	 * 
+	 * 1. update roleName or level 2. for (add baseRoleAuth) 3. for (add
+	 * baseRoleData)
+	 * 
+	 * @param id
+	 * @param roleName
+	 * @param creater
+	 * @param totalList
+	 * @param level
+	 */
+	private void updateRole(Integer id, String roleName, String creater, JSONArray totalList, Integer level) {
+
+		for (Object object : totalList) {
+			JSONObject json = (JSONObject) object;
+			update_base_role(id, roleName, level);
+			List<Integer> menuLeveIdList = new ArrayList<Integer>();
+			List<Integer> dataIdList = new ArrayList<Integer>();
+			for (Object object2 : json.getJSONArray("selectionPage")) {
+				menuLeveIdList.add((Integer) object2);
+			}
+			for (Object object2 : json.getJSONArray("selection")) {
+				dataIdList.add((Integer) object2);
+			}
+			update_base_auth_menu(menuLeveIdList, dataIdList, id, level);
+		}
+
+	}
+
+	private void addRole(String roleName, String creater, JSONArray totalList, Integer level) {
+
+		BaseRole baseRole = new BaseRole();
+		add_base_role(baseRole, roleName, creater, level);
+		for (Object object : totalList) {
+			JSONObject json = (JSONObject) object;
+			List<Integer> menuLeveIdList = new ArrayList<Integer>();
+			List<Integer> dataIdList = new ArrayList<Integer>();
+			for (Object object2 : json.getJSONArray("selectionPage")) {
+				menuLeveIdList.add((Integer) object2);
+			}
+			for (Object object2 : json.getJSONArray("selection")) {
+				dataIdList.add((Integer) object2);
+			}
+			add_base_auth_menu(menuLeveIdList, dataIdList, baseRole.getId(), level);
+		}
+	}
+
+	public List<BaseRole> getRolesOption() {
+
+		return baseRoleService.getAllRole();
+	}
+
+	public HashMap<String, Object> getRoleInfo(Integer id) {
+
+		HashMap<String, Object> roleMap = new HashMap<String, Object>();
+		BaseRole baseRole = baseRoleService.getRoleByRoleId(id);
+		if (baseRole != null) {
+			roleMap.put("roleName", baseRole.getRoleName());
+			roleMap.put("dataLevel", baseRole.getLevel());
+		}
+		return roleMap;
+	}
+
+	public List<HashMap<String, Object>> getAllMenuTree() {
+
+		return baseMenuService.getAllMenuTree();
+	}
+
+	protected void add_base_auth_menu(List<Integer> menuIdList, List<Integer> dataKeyList, Integer roleId, Integer dataLevel) {
+
+		for (Integer menuId : menuIdList) {
+			add_base_role_auth(menuId, roleId);
+		}
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("menuIdList", menuIdList);
+		List<Integer> pidList = baseMenuService.getParentMenuIdByMenuId(menuIdList);
+		for (Integer pid : pidList) {
+			add_base_role_auth(pid, roleId);
+			add_base_role_data(dataKeyList, pid, roleId, dataLevel);
+		}
+	}
+
+	protected void update_base_auth_menu(List<Integer> menuIdList, List<Integer> dataKeyList, Integer roleId, Integer dataLevel) {
+
+		// 根据roleId删除之前的菜单权限
+		baseRoleAuthService.deleteByRoleId(roleId);
+
+		for (Integer menuId : menuIdList) {
+			baseRoleDataService.reset_by_menuId_roleId(menuId, roleId);
+			add_base_role_auth(menuId, roleId);
+		}
+		List<Integer> pidList = baseMenuService.getParentMenuIdByMenuId(menuIdList);
+		for (Integer pid : pidList) {
+			add_base_role_auth(pid, roleId);
+			add_base_role_data(dataKeyList, pid, roleId, dataLevel);
+		}
+	}
+
+	protected void add_base_role_data(List<Integer> dataKeyList, Integer menuId, Integer roleId, Integer dataLevel) {
+
+		baseRoleDataService.reset_by_menuId_roleId(menuId, roleId);
+
+		for (Integer datatemplateId : dataKeyList) {
+			addBaseRoleData(menuId, roleId, datatemplateId, dataLevel);
+		}
+	}
+
+	private void add_base_role(BaseRole baseRole, String roleName, String creater, Integer level) {
+
+		baseRoleService.add_base_role(baseRole, roleName, creater, level);
+	}
+
+	private void update_base_role(Integer id, String roleName, Integer level) {
+
+		baseRoleService.update_base_role(id, roleName, level);
+	}
+
+	private void add_base_role_auth(Integer menuId, Integer roleId) {
+
+		baseRoleAuthService.add_base_role_auth(menuId, roleId);
+	}
+
+	private void addBaseRoleData(Integer menuId, Integer roleId, Integer datatemplateId, Integer dataLevel) {
+
+		baseRoleDataService.addBaseRoleData(menuId, roleId, datatemplateId, dataLevel);
+	}
+}

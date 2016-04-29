@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseRoleUserMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.authority.BaseRoleUser" >
+    <id column="roleId" property="roleId" jdbcType="INTEGER" />
+    <id column="userId" property="userId" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleUser" >
+    delete from base_role_user
+    where roleId = #{roleId,jdbcType=INTEGER}
+      and userId = #{userId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleUser" >
+    insert into base_role_user (roleId, userId)
+    values (#{roleId,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleUser" >
+    insert into base_role_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="userId != null" >
+        userId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getUserList" resultType="java.util.Map" parameterType="java.lang.Integer">
+  	 select t1.roleId, 
+  	        t1.userId as userName, 
+  	        date_format(t1.createTime, '%Y-%m-%d') as createTime,
+  	        t2.`roleName`
+  	  from base_role_user t1 left join base_role t2 on t2.id = t1.`roleId`
+  	  <where>
+  	  	  <if test="roleId != null and roleId != ''">
+	          and t1.userId = #{userId}
+	      </if>
+  	  </where>
+  </select>
+  
+</mapper>

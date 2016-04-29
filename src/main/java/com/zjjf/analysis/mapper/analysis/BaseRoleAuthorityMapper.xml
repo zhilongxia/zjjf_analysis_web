@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseRoleAuthorityMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.authority.BaseRoleAuthority" >
+    <id column="roleId" property="roleId" jdbcType="INTEGER" />
+    <id column="authId" property="authId" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleAuthority" >
+    delete from base_role_authority
+    where roleId = #{roleId,jdbcType=INTEGER}
+      and authId = #{authId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleAuthority" >
+    insert into base_role_authority (roleId, authId)
+    values (#{roleId,jdbcType=INTEGER}, #{authId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleAuthority" >
+    insert into base_role_authority
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="authId != null" >
+        authId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="authId != null" >
+        #{authId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

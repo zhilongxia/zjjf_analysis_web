@@ -1,0 +1,73 @@
+package com.zjjf.analysis.services.authority;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.base.BaseRoleData;
+import com.zjjf.analysis.beans.analysis.base.BaseRoleDataTemplate;
+import com.zjjf.analysis.mapper.analysis.BaseRoleDataMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleDataTemplateMapper;
+
+@Service
+public class BaseRoleDataService {
+
+	@Autowired
+	private BaseRoleDataTemplateMapper baseRoleDataTemplateMapper;
+
+	@Autowired
+	private BaseRoleDataMapper baseRoleDataMapper;
+
+	public List<HashMap<String, Object>> getAuthorityKeysByMenuId(Integer menuId) {
+
+		List<HashMap<String, Object>> resultList = new ArrayList<HashMap<String, Object>>();
+		HashMap<String, Object> dataParam = new HashMap<String, Object>();
+		dataParam.put("menuId", menuId);
+		List<BaseRoleDataTemplate> dataList = baseRoleDataTemplateMapper.getRoleDataTemplate(dataParam);
+		for (BaseRoleDataTemplate bean : dataList) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("id", bean.getId());
+			map.put("code", bean.getAuthkey().trim());
+			map.put("name", bean.getName());
+			map.put("checked", bean.getIsChecked());
+			resultList.add(map);
+		}
+		return resultList;
+	}
+
+	public void addBaseRoleData(Integer menuId, Integer roleId, Integer datatemplateId, Integer dataLevel) {
+
+		BaseRoleData baseRoleData = new BaseRoleData();
+		baseRoleData.setIsChecked(1);
+		baseRoleData.setLevel(dataLevel);
+		baseRoleData.setMenuId(menuId);
+		baseRoleData.setRoleId(roleId);
+		baseRoleData.setDatatemplateId(datatemplateId);
+		baseRoleDataMapper.insert(baseRoleData);
+	}
+
+	public void reset_by_menuId_roleId(Integer menuId, Integer roleId) {
+
+		HashMap<String, Object> updateMap = new HashMap<String, Object>();
+		updateMap.put("roleId", roleId);
+		updateMap.put("menuId", menuId);
+		baseRoleDataMapper.updateAllnoChecked(updateMap);
+	}
+
+	public void invalid_by_roleId_menuId(Integer roleId, Integer menuId) {
+
+		HashMap<String, Object> deleteDataMap = new HashMap<String, Object>();
+		deleteDataMap.put("roleId", roleId);
+		deleteDataMap.put("menuId", menuId);
+		baseRoleDataMapper.deleteByMenuIdAndRoleId(deleteDataMap);
+	}
+
+	public void deleteByRoleId(Integer roleId) {
+		
+		baseRoleDataMapper.deleteByRoleId(roleId);
+	}
+
+}

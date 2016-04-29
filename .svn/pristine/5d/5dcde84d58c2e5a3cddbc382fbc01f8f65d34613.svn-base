@@ -1,0 +1,144 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="zh" ng-app="role_edit">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>系统角色添加/编辑</title>
+    <%@ include file="../../common/head.jsp"%>
+    <script src="<%=request.getContextPath() %>/resources/js/angular/angular.js"></script>
+    <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/authority.css">
+</head>
+<body class="wrap-bd" ng-controller="roleEditController">
+<div class="mb-default">
+    <a href="" class="crumb">权限设置</a>
+    <a href="" class="crumb">角色管理</a>
+    <a href="" class="crumb crumb-active">角色创建/编辑</a>
+</div>
+<div class="wrap-bd table-border bg">
+    <div>
+        <label class="label">复用角色：</label>
+        <select class="select" ng-model="selectRole" ng-options="v.roleName as v.roleName for v in roleSelect">
+		    <option value="">无</option>
+		    <option value="">全部城市</option>
+		</select>
+    </div>
+    <p>
+        <label class="label">角色名：</label>
+        <input type="text" name="name" class="input input-default">
+    </p>
+    <p>
+        <label class="label">角色层级：</label>
+        <select class="select" ng-model="selectDataLevel" ng-options="v.code as v.name for v in dataLevelSelect">
+        	<option value="">无</option>
+		</select>
+    </p>
+    <div class="clearfix">
+        <label class="fl label">角色权限</label>
+        <div class="fl auth" ng-repeat="menuone in menuTree ">
+            <div data-groupname="tab" data-tab="item" class="tab-item active">{{menuone.menuName}}<i class="dir"></i></div>
+            <div data-groupname="tab" data-tab="content" class="tab-content">
+                <div class="box clearfix">
+                    <span class="txt-log mr-default fl">页面选择</span>
+                    <span class="mr-default fl">
+                        <input type="checkbox" class="checkbox" id="J_selectAll1"> 全选
+                    </span>
+                    <div class="fl list">
+                        <div class="nav">
+                        	<span class="item" ng-repeat="level2map in menuone.level2Tree"><input type="checkbox" name="role" class="checkbox J_checkbox2"/>{{level2map.menuName}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="box clearfix">
+                    <span class="txt-log mr-default fl">字段选择</span>
+                    <span class="mr-default fl">
+                        <input type="checkbox" class="checkbox" id="J_selectAll2"> 全选
+                    </span>
+                    <div class="fl list">
+                        <span class="item" ng-repeat="datamap in menuone.authorityKeys"><input type="checkbox" name="role" class="checkbox J_checkbox2"/>{{datamap.name}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-default">
+        <label class="label"></label>
+        <button class="button button-ok">保存</button>
+        <button class="button button-cancel">取消</button>
+    </div>
+</div>
+<script>
+    $(function() {
+        tab('tab');
+        selectAll('#J_selectAll1', '.J_checkbox1');
+        selectAll('#J_selectAll2', '.J_checkbox2');
+    });
+    
+    var root = '<%=request.getContextPath() %>';
+
+    var loadRoleController_url = root + '/api/authority/role/getRoleEditView.do';
+    
+    var app = angular.module('role_edit',[]); // 第二个参数定义了Module依赖 
+    app.config(function($httpProvider) {
+        $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded';
+        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+        $httpProvider.defaults.transformRequest = [function(data) {
+            var param = function(obj) {
+                var query = '';
+                var name, value, fullSubName, subName, subValue, innerObj, i;
+                for (name in obj) {
+                    value = obj[name];
+                    if (value instanceof Array) {
+                        for (i = 0; i < value.length; ++i) {
+                            subValue = value[i];
+                            fullSubName = name + '[' + i + ']';
+                            innerObj = {};
+                            innerObj[fullSubName] = subValue;
+                            query += param(innerObj) + '&';
+                        }
+                    } else if (value instanceof Object) {
+                        for (subName in value) {
+                            subValue = value[subName];
+                            fullSubName = name + '[' + subName + ']';
+                            innerObj = {};
+                            innerObj[fullSubName] = subValue;
+                            query += param(innerObj) + '&';
+                        }
+                    } else if (value !== undefined && value !== null) {
+                        query += encodeURIComponent(name) + '='
+                                + encodeURIComponent(value) + '&';
+                    }
+                }
+                return query.length ? query.substr(0, query.length - 1) : query;
+            };
+            return angular.isObject(data) && String(data) !== '[object File]'
+                    ? param(data)
+                    : data;
+        }];
+    });
+
+    app.controller('roleEditController', ['$scope', 'loadRoleService',  function ($scope, loadRoleService) {
+
+		var data = {};
+		loadRoleService.list(data).success(function (result) {
+	    	$scope.roleSelect = result.roleSelect;
+	    	$scope.dataLevelSelect = [{"code":1, name:"城市"},{"code":2, name:"区域"}];
+    		// table
+    		$scope.menuTree = result.menuTree;
+        });	
+    }]);
+    
+    // 获取订单列表
+    app.factory('loadRoleService', ['$http', function ($http) {
+        var list = function (postData) {
+            return $http.post(loadRoleController_url, postData);
+        }
+        return {
+            list: function (postData) {
+                return list(postData);
+            }
+        }
+    }]);
+</script>
+</body>
+</html>

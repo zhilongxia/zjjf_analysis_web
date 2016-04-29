@@ -1,0 +1,64 @@
+package com.zjjf.analysis.beans.analysis.base;
+
+public class BaseUserLevel {
+	private Integer id;
+
+	private Integer level;
+
+	private Integer roleId;
+
+	private Integer dataId;
+
+	private Integer isCheck;
+
+	private Integer roleUserId;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+
+	public Integer getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
+	}
+
+	public Integer getDataId() {
+		return dataId;
+	}
+
+	public void setDataId(Integer dataId) {
+		this.dataId = dataId;
+	}
+
+	public Integer getIsCheck() {
+		return isCheck;
+	}
+
+	public void setIsCheck(Integer isCheck) {
+		this.isCheck = isCheck;
+	}
+
+	public Integer getRoleUserId() {
+		return roleUserId;
+	}
+
+	public void setRoleUserId(Integer roleUserId) {
+		this.roleUserId = roleUserId;
+	}
+
+}

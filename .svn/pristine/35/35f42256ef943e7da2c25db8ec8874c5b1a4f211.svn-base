@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.origin.CustomerServiceMapper" >
+
+  <select id="getUserByCustomerServiceCredential" resultType="com.zjjf.analysis.beans.analysis.base.CustomerService" parameterType="java.lang.String" >
+    select u.id, u.userName, u.nickName, u.mobile, u.`password`, u.`status`, u.isDelete from CustomerService u where u.userName = #{userName} and u.`status` = 2 and u.isDelete=0
+  </select>
+</mapper>

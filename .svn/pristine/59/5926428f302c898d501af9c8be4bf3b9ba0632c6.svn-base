@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseUserLevelMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.base.BaseUserLevel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="roleId" property="roleId" jdbcType="INTEGER" />
+    <result column="dataId" property="dataId" jdbcType="INTEGER" />
+    <result column="isCheck" property="isCheck" jdbcType="INTEGER" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, level, roleId, dataId, isCheck, userName
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_user_level
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from base_user_level
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zjjf.analysis.beans.analysis.base.BaseUserLevel" >
+    insert into base_user_level (id, level, roleId, 
+      dataId, isCheck, userName
+      )
+    values (#{id,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
+      #{dataId,jdbcType=INTEGER}, #{isCheck,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zjjf.analysis.beans.analysis.base.BaseUserLevel" >
+    insert into base_user_level
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="dataId != null" >
+        dataId,
+      </if>
+      <if test="isCheck != null" >
+        isCheck,
+      </if>
+      <if test="userName != null" >
+        userName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="dataId != null" >
+        #{dataId,jdbcType=INTEGER},
+      </if>
+      <if test="isCheck != null" >
+        #{isCheck,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zjjf.analysis.beans.analysis.base.BaseUserLevel" >
+    update base_user_level
+    <set >
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        roleId = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="dataId != null" >
+        dataId = #{dataId,jdbcType=INTEGER},
+      </if>
+      <if test="isCheck != null" >
+        isCheck = #{isCheck,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zjjf.analysis.beans.analysis.base.BaseUserLevel" >
+    update base_user_level
+    set level = #{level,jdbcType=INTEGER},
+      roleId = #{roleId,jdbcType=INTEGER},
+      dataId = #{dataId,jdbcType=INTEGER},
+      isCheck = #{isCheck,jdbcType=INTEGER},
+      userName = #{userName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deleteByParamMap" parameterType="java.util.Map" >
+    delete from base_user_level where roleId = #{roleId} and userName = #{userName}
+  </delete>
+  
+</mapper>

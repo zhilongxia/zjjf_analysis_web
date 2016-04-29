@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseRoleDataMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.base.BaseRoleData" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="roleId" property="roleId" jdbcType="INTEGER" />
+    <result column="menuId" property="menuId" jdbcType="INTEGER" />
+    <result column="authkey" property="authkey" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="isChecked" property="isChecked" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, level, roleId, menuId, isChecked
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_role_data
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByRoleId" parameterType="java.lang.Integer" >
+      delete from base_role_data where roleId = #{roleId}
+  </delete>
+  
+  <delete id="deleteByMenuIdAndRoleId" parameterType="java.util.Map" >
+      delete from base_role_data where roleId = #{roleId} and menuId = #{menuId}
+  </delete>
+  
+  <insert id="insert" parameterType="com.zjjf.analysis.beans.analysis.base.BaseRoleData" >
+    insert into base_role_data (`level`, roleId, menuId, datatemplateId, isChecked)
+    values (#{level}, #{roleId}, #{menuId}, #{datatemplateId}, #{isChecked})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zjjf.analysis.beans.analysis.base.BaseRoleData" >
+    insert into base_role_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="menuId != null" >
+        menuId,
+      </if>
+      <if test="datatemplateId != null" >
+        datatemplateId,
+      </if>
+      <if test="isChecked != null" >
+        isChecked,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="datatemplateId != null" >
+        #{datatemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="isChecked != null" >
+        #{isChecked,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByMenuIdAndRoleId" parameterType="com.zjjf.analysis.beans.analysis.base.BaseRoleData" >
+    update base_role_data
+    <set >
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        roleId = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null" >
+        menuId = #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="datatemplateId != null" >
+        datatemplateId = #{datatemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="isChecked != null" >
+        isChecked = #{isChecked,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zjjf.analysis.beans.analysis.base.BaseRoleData" >
+    update base_role_data
+    set level = #{level,jdbcType=INTEGER},
+      roleId = #{roleId,jdbcType=INTEGER},
+      menuId = #{menuId,jdbcType=INTEGER},
+      isChecked = #{isChecked,jdbcType=INTEGER},
+      datatemplateId = #{datatemplateId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getAuthorityData" resultMap="BaseResultMap" parameterType="java.util.Map" >
+     select  
+      t1.id,
+	  t1.`authkey`,
+	  t1.name,
+	  t2.`level`,
+	  t2.`roleId`,
+	  t2.`menuId`,
+	  t2.`isChecked`
+      from base_role_data_template t1 left join base_role_data t2 on t2.`datatemplateId` = t1.`id`
+    <where>
+    	<if test="menuId != null and menuId != '' " >
+        	and t2.menuId = #{menuId}
+        </if>
+        <if test="isChecked != null and isChecked != '' " >
+        	and t2.isChecked = #{isChecked}
+        </if>
+        <if test="roleId != null and roleId != '' " >
+        	and t2.roleId in ${roleId}
+        </if>
+    </where>
+  </select>
+  
+  <update id="updateAllnoChecked" parameterType="java.util.Map" >
+    update base_role_data set isChecked = 0 where menuId = #{menuId} and roleId = #{roleId}
+  </update>
+</mapper>

@@ -1,0 +1,76 @@
+package com.zjjf.analysis.beans.analysis.base;
+
+public class BaseRoleData {
+	private Integer id;
+
+	private Integer level;
+
+	private Integer roleId;
+
+	private Integer menuId;
+
+	private String tableKey;
+
+	private Integer isChecked;
+	
+	private String name;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+
+
+	public Integer getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
+	}
+
+	public Integer getMenuId() {
+		return menuId;
+	}
+
+	public void setMenuId(Integer menuId) {
+		this.menuId = menuId;
+	}
+
+	public String getTableKey() {
+		return tableKey;
+	}
+
+	public void setTableKey(String tableKey) {
+		this.tableKey = tableKey == null ? null : tableKey.trim();
+	}
+
+	public Integer getIsChecked() {
+		return isChecked;
+	}
+
+	public void setIsChecked(Integer isChecked) {
+		this.isChecked = isChecked;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	
+}

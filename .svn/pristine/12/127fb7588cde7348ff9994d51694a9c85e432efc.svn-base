@@ -1,0 +1,88 @@
+##便利店数据分析
+
+###便利店明细数据分析页面表  `store_page`
+
+字段  | 类型  |  comment | 数据来源表 | 获取方式
+------------- | ------------- | ------------- | ------------- | -------------
+`id`  |  `int(11)`  | `id` | `auto_increment`  | `auto_increment`
+`cityId` |  `int(11)`   | `城市id` | `base_store`  | `base_region.name`
+`areaId`  | `int(11)`  | `区域id`  | `base_store`  | `base_region.name`
+`gridId`  | `int(11)`   | `定格Id`  | `base_sp_group`  | `base_sp_group.name`
+`storeId` | `int(11)`   | `便利店id`  | `base_store`  | `base_store.id`
+`storeCode`  | `varchar(32)`   | `便利店编号`  | `base_store`  | `supplierCode`
+`storeName`  | `varchar(32)`   | `便利店名称`  | `base_store`  | `supplierCode`
+`storeContact`  | `varchar(32)`   |`便利店联系人`  | `base_store`  | `base_store.contact`
+`storeMobile`  | `varchar(32)`   | `便利店手机号`  | `base_store`  | `base_store.tel`
+`registerTime`  | `varchar(32)`   | `便利店注册时间`  | `base_store`   | `base_store.signTime`
+`phoneModels`  | `varchar(32)`   | `便利店常用机型`  | ``  | ``
+`storeStatus`  | `varchar(32)`   | `便利店通过状态`  | ``  | ``
+`storeLicenses`  | `varchar(32)`   |`营业执照`  | `base_store_info`  | `base_store_info.licenseNum`
+`shoperName`  | `varchar(32)`   | `便利店负责业务员`  | `base_store_info`  | `base_store_info.yewuRenTel`
+`shoperMobile`  | `varchar(32)`   | `业务员手机号码`  | `base_store_info`  | `base_store_info.yewuRenTel`
+`createTime` | `int(11)`   | `新增时间`  | `new Date().int`  | `new Date().int`
+`updateTime`  | `timestamp`   | `修改时间`  | `current_timestamp`  | `current_timestamp`
+
+#####便利店数据sql
+
+1.  select  `b.name` as `cityName`, `c.name` as `areaName` from `base_store` `a` left join `base_region` `b` on `a.cityId` =  `b.id` left join `base_region` `c` on `a.aredId` =  `c.id`
+
+2.  select `pg.name` as `gridName` from `base_store` `a` left join `base_sp_group` `pg` on `pg.id`= `a.spGroupId` 
+
+3.  select  `a.id` as `storeId`, `a.supplierCode` as `storeCode`, `a.contact` as `storeContact`, `a.contact` as `storeContact`, `a.tel` as `storeMobile`, `a.signTime` as `registerTime`, `null` as `phoneModels`**(????),**, `b.status` as `storeStatus`, `b.licenseNum` as `storeLicenses`, null as `shoperName`, `b.yewuRenTel` as `shoperMobile` from `base_store` `a` left join `base_store_info` `b` on `a.id = b.id`
+
+<br/>
+###便利店销售明细数据分析页面表  `store_sale_page`
+
+字段  | 类型  |  comment | 数据来源表 | 获取方式
+------------- | ------------- | ------------- | ------------- | -------------
+`id`  |  `int(11)`  | `id` | `auto_increment`  | `auto_increment`
+`cityId` |  `int(11)`   | `城市id` | `base_store`  | `base_region.name`
+`areaId`  | `int(11)`  | `区域id`  | `base_store`  | `base_region.name`
+`gridId`  | `varchar(32)`   | `定格`  | `base_sp_group`  | `base_sp_group.name`
+`storeId` | `int(11)`   | `便利店id`  | `base_store`  | `base_store.id`
+`storeCode`  | `varchar(32)`   | `便利店编号`  | `base_store`  | `supplierCode`
+`storeName`  | `varchar(32)`   |`便利店名称`  | `base_store`  | `base_store.contact`
+`orderTimes`  | `varchar(32)`   | `下单次数`  | `support_sale_store`   | `support_sale_store.orderTimes`
+`storeSku`  | `varchar(32)`   |`销量sku`  | `support_sale_store`  | `storeSku`
+`saleNums`  | `varchar(32)`   |`销售数量`  | `support_sale_store`  |  `support_sale_store.saleNums`
+`salePrices`  | `varchar(32)`   | `交易额`  | `support_sale_store`  | `support_sale_store.salePrices`
+`storeCosts`  | `varchar(32)`   | `费用金额`  | `support_sale_store`  | `support_sale_store.storeCosts`
+`storeRate`  | `varchar(32)`   | `费用率`  | `support_sale_store`  | `support_sale_store.storeRate`
+`createTime` | `int(11)`   | `新增时间`  | `new Date().int`  | `new Date().int`
+`updateTime`  | `timestamp`   | `修改时间`  | `current_timestamp`  | `current_timestamp`
+
+#####便利店数据sql
+
+1.  select  `b.name` as `cityName`, `c.name` as `areaName` from `support_sale_store` `a` left join `base_region` `b` on `a.cityId` =  `b.id` left join `base_region` `c` on `a.aredId` =  `c.id`
+
+2.  select `pg.name` as `gridName` from `support_sale_store` `a` left join `base_sp_group` `pg` on `pg.id`= `a.gridId` 
+
+3.  select `a.storeId`, `b.supplierCode` as `storeCode`, `b.name` as `storeName` from `support_sale_store` `a` left join `base_store_info` `b` on `a.storeId = b.id`
+
+4. select `orderTimes`, `storeSku`, `saleNums`, `salePrices`, `storeCosts`, `storeRate` from `support_sale_store`
+
+###商品数据分析中间表  `support_sale_store`
+
+字段  | 类型  |  comment | 数据来源表 | 获取方式
+------------- | ------------- | ------------- | ------------- | -------------
+`id`  |  `int(11)`  | `id` | `auto_increment`  | `auto_increment`
+`cityId` |  `int(11)`   | `城市id` | `base_store`  | `cityId`
+`areaId`  | `int(11)`  | `区域id`  | `base_store`  | `areaId`
+`gridId`  | `varchar(32)`   | `定格`  | `ana_sp_orderInfo`  | `storeId`
+`storeId` | `int(11)`   | `便利店id`  | `base_store`  | `base_store.id`
+`orderTimes`  | `varchar(32)`   | `下单次数`  | `ana_sp_orderInfo`   | `sum(ana_sp_orderInfo.storeId)`
+`saleNums`  | `varchar(32)`   |`销售数量`  | `ana_sp_orderInfo`  |  `sum(ana_sp_orderInfo.saleNums)`
+`salePrices`  | `varchar(32)`   | `交易额`  | `ana_sp_orderInfo`  | `sum(ana_sp_orderInfo.salePrices)`
+`storeCosts`  | `varchar(32)`   | `费用金额`  | `ana_sp_orderInfo`  | `sum(ana_sp_orderInfo.fee)`
+`storeRate`  | `varchar(32)`   | `费用率`  | `ana_sp_orderInfo`  | `productCosts/salePrice`
+`createTime` | `int(11)`   | `新增时间`  | `new Date().int`  | `new Date().int`
+`updateTime`  | `timestamp`   | `修改时间`  | `current_timestamp`  | `current_timestamp`
+
+
+#####便利店数据分析中间表sql
+
+1.  select `b.cityId`, `b.areaId`, `a.storeId` from `ana_sp_orderInfo` `a` left join `base_store` `b` on `a.storeId = b.id`
+
+2.  select `pg.id` as `gridId` from `ana_sp_orderInfo` left join `base_store` `b` on `a.storeId = b.id` left join `base_sp_group` `pg` on `pg.id`= `b.spGroupId` 
+
+3. select count(`ana_sp_orderInfo.itemId`) as `orderTimes`, sum(`ana_sp_orderInfo.quantity`) as `saleNums`,  sum(`ana_sp_orderInfo.totalPrice`) as `salePrices`, sum(`ana_sp_orderInfo.maoli`) as `profit`, sum(`ana_sp_orderInfo.fee`) as `productCosts`,  `productCosts`/`salePrices` as `costRate` from `ana_sp_orderInfo` group by `storeId`

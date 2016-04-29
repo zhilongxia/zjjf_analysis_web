@@ -1,0 +1,21 @@
+package com.zjjf.analysis.mapper.analysis;
+
+import java.util.HashMap;
+
+import com.zjjf.analysis.beans.analysis.base.BaseUserLevel;
+
+public interface BaseUserLevelMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(BaseUserLevel record);
+
+    int insertSelective(BaseUserLevel record);
+
+    BaseUserLevel selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(BaseUserLevel record);
+
+    int updateByPrimaryKey(BaseUserLevel record);
+    
+    void deleteByParamMap(HashMap<String, Object> paramMap);
+}

@@ -1,0 +1,23 @@
+package com.zjjf.analysis.mapper.analysis;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseMenu;
+
+public interface BaseMenuMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(BaseMenu record);
+
+    int insertSelective(BaseMenu record);
+
+    BaseMenu selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(BaseMenu record);
+
+    int updateByPrimaryKey(BaseMenu record);
+    
+
+    List<HashMap<String, Object>> getMenuLevel(HashMap<String, Object> paramMap);
+}

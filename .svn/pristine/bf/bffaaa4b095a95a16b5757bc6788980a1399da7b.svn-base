@@ -1,0 +1,1 @@
+angular.module("My97Ext",[]).directive("datePicker",function(){return{restrict:"A",require:"?ngModel",scope:{},link:function(e,i,t,n){i.val(n.$viewValue),i.bind("click",function(){WdatePicker({dateFmt:"yyyy-MM-dd",isShowClear:!1,isShowWeek:!0,onpicking:function(i){var t=i.cal.getNewDateStr();e.$apply(function(){n.$setViewValue(t)})}})})}}});

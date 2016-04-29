@@ -1,0 +1,22 @@
+package com.zjjf.analysis.services.authority;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseRoleUser;
+import com.zjjf.analysis.mapper.analysis.BaseRoleUserMapper;
+
+@Service
+public class BaseRoleUserServcie {
+	
+	@Autowired
+	private BaseRoleUserMapper baseRoleUserMapper;
+	
+	public void add_base_role_user(Integer roleId, String userId){
+		
+		BaseRoleUser baseRoleUser = new BaseRoleUser();
+		baseRoleUser.setRoleId(roleId);
+		baseRoleUser.setUserId(userId);
+		baseRoleUserMapper.insert(baseRoleUser);
+	}
+}

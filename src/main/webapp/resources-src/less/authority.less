@@ -1,0 +1,69 @@
+.auth {
+    min-width: 200px;
+    width: 85%;
+    margin-left: 4px;
+}
+.auth .tab-item {
+    margin-bottom: 3px;
+    padding: 10px 15px;
+    height: 16px;
+    line-height:16px;
+    background: #f4f4f4;
+    color: #525252;
+    cursor: pointer;
+}
+.auth .tab-item .dir {
+    float: right;
+    width: 9px;
+    height: 16px;
+    display: block;
+    background: url(../../resources/images/direction-down-black.png) no-repeat center;
+}
+.auth .tab-item.active .dir {
+    background: url(../../resources/images/direction-up-black.png) no-repeat center;
+}
+.auth .tab-content .box {
+    padding: 25px 15px;
+    border-bottom: 1px solid #f1f1f3;
+    line-height: 30px;
+}
+.auth .tab-content .box:last-child {
+    border-bottom: 0 none;
+}
+.auth .tab-content .box .list {
+    min-width: 400px;
+    width: 75%;
+    margin-left: 20px;
+}
+.auth .tab-content .box .list .nav {
+    border-bottom: 1px dashed #f1f1f3;
+    padding-bottom: 15px;
+}
+.auth .tab-content .box .list .subnav {
+    padding-top: 15px;
+}
+.auth .tab-content .box .list .item {
+    width: 180px;
+    height: 30px;
+    display: inline-block;
+    overflow:hidden;
+}
+.auth .tab-content .box .list .item .icon {
+    margin-left: 3px;
+    width: 9px;
+    height: 12px;
+    display: inline-block;
+    background: url(../../resources/images/caret.png) no-repeat center;
+}
+.auth .tab-content .box .list .item .txt {
+    margin-left: 3px;
+    padding: 2px 8px;
+    border: 1px solid #e7e8eb;
+}
+.auth .tab-content .box .list .item.active .icon {
+    background: url(../../resources/images/caret-active.png) no-repeat center;
+}
+.auth .tab-content .box .list .item.active .txt {
+    color: #0096e0;
+    cursor: pointer;
+}

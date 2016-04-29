@@ -1,0 +1,187 @@
+package com.zjjf.analysis.services.authority;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseRole;
+import com.zjjf.analysis.beans.analysis.base.AnaDictionary;
+import com.zjjf.analysis.beans.analysis.base.BaseAuthMenu;
+import com.zjjf.analysis.beans.analysis.base.BaseRoleAuth;
+import com.zjjf.analysis.beans.analysis.base.BaseRoleData;
+import com.zjjf.analysis.mapper.analysis.BaseAuthMenuMapper;
+import com.zjjf.analysis.mapper.analysis.BaseMenuMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleAuthMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleDataMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleUserMapper;
+import com.zjjf.analysis.services.AbstractBaseServcie;
+
+import net.sf.json.JSONObject;
+
+@Service
+public class AuthorityUserServcie extends AbstractBaseServcie {
+
+	private Integer authId = 1;
+
+	@Autowired
+	private BaseRoleMapper baseRoleMapper;
+
+	@Autowired
+	private BaseMenuMapper baseMenuMapper;
+
+	@Autowired
+	private BaseRoleDataMapper baseRoleDataMapper;
+
+	@Autowired
+	private BaseRoleAuthMapper baseRoleAuthMapper;
+
+	@Autowired
+	private BaseAuthMenuMapper baseAuthMenuMapper;
+
+	@Autowired
+	private BaseRoleUserMapper baseRoleUserMapper;
+
+	public HashMap<String, Object> getDataList(Integer roleId) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		BaseRole baseRole = baseRoleMapper.getRoleByRoleId(roleId);
+		if (baseRole.getLevel() == 1) {
+			HashMap<String, Object> cityMap = new HashMap<String, Object>();
+			cityMap.put("regionLevel", 3);
+			cityMap.put("pid", 6);
+			List<AnaDictionary> listDict = getRegionCodeList(cityMap);
+			resultMap.put("level", 1);
+			resultMap.put("listDict", listDict);
+		} else if (baseRole.getLevel() == 2) {
+			HashMap<String, Object> areaMap = new HashMap<String, Object>();
+			areaMap.put("regionLevel", 4);
+			areaMap.put("pid", 77);
+			List<AnaDictionary> listDict = getRegionCodeList(areaMap);
+			resultMap.put("level", 2);
+			resultMap.put("listDict", listDict);
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getUserInfo(Integer id) {
+
+		return baseRoleUserMapper.getById(id);
+	}
+
+	public List<HashMap<String, Object>> getUserList(HashMap<String, Object> paramMap) {
+
+		return baseRoleUserMapper.getUserList(paramMap);
+	}
+
+	public HashMap<String, Object> addRoles(JSONObject jsonObj, String userId) {
+
+		Integer dataLevel = 1;
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		BaseRole baseRole = new BaseRole();
+		add_base_role(baseRole, "roleName", userId);
+		add_base_role_auth(authId, baseRole.getId());
+		add_base_auth_menu(authId, Arrays.asList(1, 2), new ArrayList<HashMap<String, Object>>(), baseRole.getId(), dataLevel);
+		return map;
+	}
+
+	private void add_base_role(BaseRole baseRole, String roleName, String userId) {
+
+		baseRole.setRoleNo(roleName);
+		baseRole.setRoleName(roleName);
+		baseRole.setRoleRemark(roleName);
+		baseRole.setCreateTime(new Date() + "");
+		baseRole.setCreateUser(userId);
+		baseRole.setStatus(1);
+		baseRole.setOrdId(99);
+		baseRole.setIsDelete("1");
+		baseRoleMapper.insert(baseRole);
+	}
+
+	private void add_base_role_auth(Integer menuAuthId, Integer roleId) {
+
+		BaseRoleAuth baseRoleAuth = new BaseRoleAuth();
+		baseRoleAuth.setMenuAuthId(menuAuthId);
+		baseRoleAuth.setRoleId(roleId);
+		baseRoleAuthMapper.insert(baseRoleAuth);
+	}
+
+	private void add_base_auth_menu(Integer authId, List<Integer> menuIdList, List<HashMap<String, Object>> mapList, Integer roleId,
+			Integer dataLevel) {
+
+		for (Integer menuId : menuIdList) {
+
+			BaseAuthMenu baseAuthMenu = new BaseAuthMenu();
+			baseAuthMenu.setAuthId(authId);
+			baseAuthMenu.setMenuId(menuId);
+			baseAuthMenuMapper.insert(baseAuthMenu);
+			add_base_role_data(mapList, menuId, roleId, dataLevel);
+		}
+	}
+
+	private void add_base_role_data(List<HashMap<String, Object>> mapList, Integer menuId, Integer roleId, Integer dataLevel) {
+
+		for (HashMap<String, Object> map : mapList) {
+
+			BaseRoleData baseRoleData = new BaseRoleData();
+			baseRoleData.setIsChecked(Integer.valueOf("" + map.get("isChecked")));
+			baseRoleData.setLevel(dataLevel);
+			baseRoleData.setMenuId(menuId);
+			baseRoleData.setRoleId(roleId);
+			baseRoleData.setTableKey("" + map.get("tableKey"));
+			baseRoleDataMapper.insert(baseRoleData);
+		}
+	}
+
+	public HashMap<String, Object> overrideRole(Integer roleId) {
+
+		HashMap<String, Object> overrideMap = new HashMap<String, Object>();
+
+		BaseRole baseRole = baseRoleMapper.getRoleByRoleId(roleId);
+		overrideMap.put("roleName", baseRole.getRoleName());
+		return overrideMap;
+	}
+
+	public List<BaseRole> getRolesOption() {
+
+		return baseRoleMapper.getAllRole();
+	}
+
+	public List<HashMap<String, Object>> getAllMenuTree() {
+
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("level", 1);
+		List<HashMap<String, Object>> menuTree = baseMenuMapper.getAllMenu(paramMap);
+		for (HashMap<String, Object> hashMap : menuTree) {
+			paramMap.clear();
+			Integer meneId = Integer.valueOf("" + hashMap.get("id"));
+			paramMap.put("pid", hashMap.get("id"));
+			paramMap.put("level", 2);
+			List<HashMap<String, Object>> level2Tree = baseMenuMapper.getAllMenu(paramMap);
+			hashMap.put("level2Tree", level2Tree);
+			hashMap.put("authorityKeys", getAuthorityKeysByMenuId(meneId));
+		}
+		return menuTree;
+	}
+
+	private List<HashMap<String, Object>> getAuthorityKeysByMenuId(Integer menuId) {
+
+		List<HashMap<String, Object>> resultList = new ArrayList<HashMap<String, Object>>();
+		HashMap<String, Object> dataParam = new HashMap<String, Object>();
+		dataParam.put("menuId", menuId);
+		List<BaseRoleData> dataList = baseRoleDataMapper.getAuthorityData(dataParam);
+		for (BaseRoleData baseRoleData : dataList) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("code", baseRoleData.getTableKey().trim());
+			map.put("name", baseRoleData.getName());
+			map.put("IsChecked", baseRoleData.getIsChecked());
+			resultList.add(map);
+		}
+		return resultList;
+	}
+}

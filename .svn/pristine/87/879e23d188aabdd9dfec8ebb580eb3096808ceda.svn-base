@@ -1,0 +1,130 @@
+package com.zjjf.analysis.controller.authority;
+
+import java.util.Arrays;
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.shiro.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.zjjf.analysis.common.constants.SessionConfig;
+import com.zjjf.analysis.controller.BaseController;
+import com.zjjf.analysis.services.authority.AuthorityRoleService;
+import com.zjjf.analysis.services.authority.AuthorityUserService;
+
+@Controller
+@RequestMapping({ "/api/authority/user" })
+public class AuthorityUserController extends BaseController {
+
+	private final Integer limit = 5;
+
+	private static Logger logger = LoggerFactory.getLogger(AuthorityUserController.class);
+
+	@Autowired
+	private AuthorityUserService authorityUserService;
+
+	@Autowired
+	private AuthorityRoleService authorityRoleService;
+
+	@RequestMapping(value = "/loadPage.do")
+	public String loaded(HttpServletRequest request) {
+
+		return "analysis/auth/user";
+	}
+
+	@RequestMapping(value = "/getUserList.do")
+	@ResponseBody
+	public HashMap<String, Object> getUserList(HttpServletRequest request) {
+
+		String currentPage = request.getParameter("currentPage") == null ? "0" : request.getParameter("currentPage");
+		String itemsPerPage = request.getParameter("itemsPerPage") == null ? "5" : request.getParameter("itemsPerPage");
+
+		HashMap<String, Object> paramMap = getQueryMap(request,
+				Arrays.asList("userName", "createTimeBegin", "createTimeEnd", "roleId"));
+		paramMap.put("pageNo", (Integer.valueOf(currentPage) - 1) * limit);
+		paramMap.put("offset", Integer.valueOf(itemsPerPage));
+		logger.info("交易订单传入参数 paramMap:" + paramMap);
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("userList", authorityUserService.getUserList(paramMap));
+		resultMap.put("roleList", authorityRoleService.getRoleList());
+		resultMap.put("totalCount", authorityUserService.getTotalCount());
+		return resultMap;
+	}
+
+	@RequestMapping(value = "/user_edit.do")
+	public String user_edit(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id, Model model) {
+
+		model.addAttribute("id", id);
+		return "analysis/auth/user_edit";
+	}
+
+	@RequestMapping(value = "/getEditUserView.do")
+	@ResponseBody
+	public HashMap<String, Object> getEditUserView(HttpServletRequest request,
+			@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		HashMap<String, Object> userInfoMap = authorityUserService.getUserInfo(id);
+		resultMap.put("userInfo", userInfoMap);
+		if (id > 0) {
+			Integer roleId = Integer.valueOf("" + userInfoMap.get("roleId"));
+			resultMap.put("listDict", authorityUserService.getAreaDataList(roleId, id));
+		} else {
+			resultMap.put("listDict", authorityUserService.getDataList());
+		}
+		resultMap.put("userSelected", authorityUserService.getUserSelected(userInfoMap));
+		resultMap.put("roleList", authorityRoleService.getRoleList());
+		return resultMap;
+	}
+
+	@RequestMapping(value = "/saveUserInfo.do")
+	@ResponseBody
+	public HashMap<String, Object> saveUserInfo(
+			@RequestParam(value = "roleId", required = false, defaultValue = "0") Integer roleId,
+			@RequestParam(value = "id", required = false, defaultValue = "0") Integer id,
+			@RequestParam(value = "userName", required = true, defaultValue = "") String userName,
+			@RequestParam(value = "areaCodes", required = true, defaultValue = "") String areaCodes) {
+
+		String creater = (String) SecurityUtils.getSubject().getSession().getAttribute(SessionConfig.userId);
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		authorityUserService.saveUserInfo(id, roleId, creater, userName, areaCodes);
+		return resultMap;
+	}
+
+	@RequestMapping(value = "/deleteUser.do")
+	@ResponseBody
+	public HashMap<String, Object> deleteUser(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		authorityUserService.deleteUser(id);
+		resultMap.put("code", "0");
+		return resultMap;
+	}
+
+	@RequestMapping(value = "/getAreaByCityId.do")
+	@ResponseBody
+	public HashMap<String, Object> getAreaByCityId(HttpServletRequest request,
+			@RequestParam(value = "cityId", required = false, defaultValue = "0") Integer cityId,
+			@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
+
+		return authorityUserService.getAreaByCityId(cityId, id);
+	}
+
+	@RequestMapping(value = "/userNameRegular.do")
+	@ResponseBody
+	public HashMap<String, Object> userNameRegular(HttpServletRequest request,
+			@RequestParam(value = "userName", required = false, defaultValue = "0") String userName) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("code", authorityUserService.userNameRegular(userName));
+		return resultMap;
+	}
+}

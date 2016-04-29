@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+http://www.springframework.org/schema/aop 
+http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
+default-autowire="byName">
+	
+	<bean id="userRealm" class=" com.zjjf.analysis.services.authority.AnaUserInfoRealm"/>
+	
+	<!-- 配置权限管理器 -->  
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">    
+        <property name="realm" ref="userRealm"/>    
+        <property name="cacheManager" ref="cacheManager"/>    
+    </bean>  
+      
+    <!-- 配置shiro的过滤器工厂类，id- shiroFilter要和我们在web.xml中配置的过滤器一致 -->  
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">  
+    	<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/analysis/authority/scmsLoginPage.do" />
+		<property name="successUrl" value="/analysis/authority/scmsIndexPage.do" />
+		<property name="unauthorizedUrl" value="/analysis/authority/scmsLoginPage.do" />
+		<property name="filterChainDefinitions">
+			<value>
+				/resources/**=anon
+				/analysis/authority/scmsLoginPage.do=anon
+				/analysis/authority/userLoginIn.do=anon
+				/analysis/authority/scMgLoginIn.do=anon
+				/analysis/authority/doLoginOut.do=anon
+			<!-- 	/api/sp_order/**.do=authc,perms[all] 需要名称为manager的权限permission
+                /api/sp_order/**.do=authc,roles[abc] 需要名称为admin的角色role -->
+				/checkcode.do=anon
+				/api/**=authc
+			</value>
+		</property>   
+    </bean>  
+      
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />    
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />   
+</beans>

@@ -1,0 +1,17 @@
+package com.zjjf.analysis.mapper.analysis;
+
+import com.zjjf.analysis.beans.analysis.base.BaseRoleAuth;
+
+public interface BaseRoleAuthMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(BaseRoleAuth record);
+
+    int insertSelective(BaseRoleAuth record);
+
+    BaseRoleAuth selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(BaseRoleAuth record);
+
+    int updateByPrimaryKey(BaseRoleAuth record);
+}

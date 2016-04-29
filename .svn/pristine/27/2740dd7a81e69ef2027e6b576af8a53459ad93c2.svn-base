@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+
+	<classPathEntry location="C:\Users\Administrator\.m2\repository\mysql\mysql-connector-java\5.1.36\mysql-connector-java-5.1.36.jar" />
+	<context id="sysGenerator" targetRuntime="MyBatis3">
+		<commentGenerator>
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->  
+    		<property name="suppressAllComments" value="true" />  
+			<property name="prjname" value="zjjf_analysis_web" />
+		</commentGenerator>
+
+ 	    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.1.11:3316/dataImport" userId="gg" password="gg2802" />
+
+		<javaModelGenerator targetPackage="com.zjjf.analysis.beans.analysis.base"
+			targetProject="zjjf_analysis_web">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator targetPackage="com.zjjf.analysis.mapper.analysis"
+			targetProject="zjjf_analysis_web">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.zjjf.analysis.mapper.analysis" targetProject="zjjf_analysis_web">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+		
+		
+<!--   		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.1.11:3316/dataImport" userId="gg" password="gg2802" />
+		
+		<javaModelGenerator targetPackage="com.zjjf.analysis.beans.analysis"
+			targetProject="zjjf_analysis_web">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator targetPackage="com.zjjf.analysis.mapper.analysis"
+			targetProject="zjjf_analysis_web">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.zjjf.analysis.mapper.analysis" targetProject="zjjf_analysis_web">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+ -->
+		<table tableName="CustomerService" domainObjectName="CustomerService"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false"
+			selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="true" />
+		</table> 
+		
+	</context>
+</generatorConfiguration>

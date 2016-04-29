@@ -1,0 +1,26 @@
+package com.zjjf.analysis.common.constants;
+
+public class SessionConfig {
+	
+	public final static String userId = "userId";
+	
+	public final static String userAuthMap = "userAuthMap";
+	
+	public final static String user_session_key = "user_session_key";
+	
+	public final static String user_session_userInfo = "user_session_userInfo";
+
+	public final static String user_session_code = "user_session_code";
+
+	public final static String user_type_key = "user_type_key";
+	
+	public final static String user_authentication = "user_authentication";
+	
+	public final static String menuTree = "menuTree";
+	
+	public final static String authorityDataKey = "authorityDataKey";
+	
+	public final static String filterKeys = "filterKeys";
+	
+	public final static String filterAuthorityData = "filterAuthorityData";
+}

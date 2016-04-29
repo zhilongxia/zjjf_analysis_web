@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseRoleDataTemplateMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.base.BaseRoleDataTemplate" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="menuId" property="menuId" jdbcType="INTEGER" />
+    <result column="authkey" property="authkey" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, menuId, authkey, name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_role_data_template
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from base_role_data_template
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zjjf.analysis.beans.analysis.base.BaseRoleDataTemplate" >
+    insert into base_role_data_template (id, menuId, authkey, 
+      name)
+    values (#{id,jdbcType=INTEGER}, #{menuId,jdbcType=INTEGER}, #{authkey,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zjjf.analysis.beans.analysis.base.BaseRoleDataTemplate" >
+    insert into base_role_data_template
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="menuId != null" >
+        menuId,
+      </if>
+      <if test="authkey != null" >
+        authkey,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="authkey != null" >
+        #{authkey,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zjjf.analysis.beans.analysis.base.BaseRoleDataTemplate" >
+    update base_role_data_template
+    <set >
+      <if test="menuId != null" >
+        menuId = #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="authkey != null" >
+        authkey = #{authkey,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zjjf.analysis.beans.analysis.base.BaseRoleDataTemplate" >
+    update base_role_data_template
+    set menuId = #{menuId,jdbcType=INTEGER},
+      authkey = #{authkey,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getRoleDataTemplate" resultMap="BaseResultMap" parameterType="java.util.Map" >
+     select <include refid="Base_Column_List" /> from base_role_data_template
+    <where>
+    	<if test="menuId != null and menuId != '' " >
+        	and menuId = #{menuId}
+        </if>
+    </where>
+  </select>
+</mapper>

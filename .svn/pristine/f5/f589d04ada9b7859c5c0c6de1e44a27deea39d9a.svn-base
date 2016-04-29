@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>系统用户添加/编辑</title>
+    <link href="../../resources/images/favicon.png" rel="icon" type="image/x-icon" />
+    <link href="../../resources/css/normalize.css" rel="stylesheet" type="text/css">
+    <link href="../../resources/css/base.css" rel="stylesheet" type="text/css">
+    <script src="../../resources/vendor/jquery/jquery-1.12.3.min.js"></script>
+</head>
+<body class="wrap-bd">
+<div class="mb-default">
+    <a href="" class="crumb">权限设置</a>
+    <a href="" class="crumb">用户管理</a>
+    <a href="" class="crumb crumb-active">用户创建/编辑</a>
+</div>
+<div class="wrap-bd bg">
+    <div>
+        <label class="label">用户名：</label>
+        <input type="text" name="name" class="input input-default">
+    </div>
+    <p>
+        <label class="label">角色：</label>
+        <select class="select">
+            <option value="">000</option>
+        </select>
+    </p>
+    <div class="clearfix">
+        <label class="label fl">用户数据权限：</label>
+        <div class="fl" style="min-width: 200px; width: 85%; margin-left: 4px;">
+            <select class="select">
+                <option value="">广州</option>
+            </select>
+            <p>
+                <span style="display: inline-block; width: 100px; height: 20px; overflow:hidden;"><input type="checkbox" name="role" class="checkbox"> 深圳</span>
+                <span style="display: inline-block; width: 100px; height: 20px; overflow:hidden;"><input type="checkbox" name="role" class="checkbox"> 深圳</span>
+            </p>
+        </div>
+    </div>
+    <div>
+        <button class="button button-ok">保存</button>
+        <button class="button button-cancel">取消</button>
+    </div>
+</div>
+</body>
+</html>

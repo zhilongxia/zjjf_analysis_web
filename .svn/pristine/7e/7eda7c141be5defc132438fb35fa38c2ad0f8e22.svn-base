@@ -1,0 +1,120 @@
+package com.zjjf.analysis.services.authority;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseRole;
+import com.zjjf.analysis.beans.analysis.authority.BaseRoleUser;
+import com.zjjf.analysis.beans.analysis.base.AnaDictionary;
+import com.zjjf.analysis.beans.analysis.base.BaseUserLevel;
+import com.zjjf.analysis.mapper.analysis.BaseRoleMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleUserMapper;
+import com.zjjf.analysis.mapper.analysis.BaseUserLevelMapper;
+import com.zjjf.analysis.services.AbstractBaseServcie;
+
+@Service
+public class AuthorityUserServcie extends AbstractBaseServcie {
+
+	@Autowired
+	private BaseRoleMapper baseRoleMapper;
+
+	@Autowired
+	private BaseRoleUserMapper baseRoleUserMapper;
+	
+	@Autowired
+	private BaseUserLevelMapper baseUserLevelMapper;
+	
+	public void deleteUser(Integer id) {
+		
+		baseRoleUserMapper.deleteById(id);
+		baseUserLevelMapper.deleteByUserName(id + "");
+	}
+
+	public HashMap<String, Object> getDataList(Integer roleId) {
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		if(roleId == 0){
+			HashMap<String, Object> cityMap = new HashMap<String, Object>();
+			cityMap.put("regionLevel", 3);
+			cityMap.put("pid", 6);
+			List<AnaDictionary> listDict = getRegionCodeList(cityMap);
+			resultMap.put("level", 1);
+			resultMap.put("listDict", listDict);
+			return resultMap;
+		}
+		BaseRole baseRole = baseRoleMapper.getRoleByRoleId(roleId);
+		if (baseRole.getLevel() == 1) {
+			HashMap<String, Object> cityMap = new HashMap<String, Object>();
+			cityMap.put("regionLevel", 3);
+			cityMap.put("pid", 6);
+			List<AnaDictionary> listDict = getRegionCodeList(cityMap);
+			resultMap.put("level", 1);
+			resultMap.put("listDict", listDict);
+		} else if (baseRole.getLevel() == 2) {
+			HashMap<String, Object> areaMap = new HashMap<String, Object>();
+			areaMap.put("regionLevel", 4);
+			areaMap.put("pid", 77);
+			List<AnaDictionary> listDict = getRegionCodeList(areaMap);
+			resultMap.put("level", 2);
+			resultMap.put("listDict", listDict);
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getUserInfo(Integer id) {
+
+		return baseRoleUserMapper.getById(id);
+	}
+
+	public List<HashMap<String, Object>> getUserList(HashMap<String, Object> paramMap) {
+
+		return baseRoleUserMapper.getUserList(paramMap);
+	}
+
+	public void saveUserInfo(String id, Integer roleId, String creater, String userName, String areaCodeStr, String level) {
+
+		if (areaCodeStr != null && areaCodeStr.length() > 0) {
+			BaseRoleUser baseRoleUser = new BaseRoleUser();
+			add_base_role_user(baseRoleUser, id, roleId, userName, areaCodeStr, level);
+		}
+	}
+
+	private void add_base_role_user(BaseRoleUser baseRoleUser, String id, Integer roleId, String userName, String areaCodeStr, String level) {
+
+		if (id == null || "0".equals(id)) {
+			baseRoleUser.setRoleId(roleId);
+			baseRoleUser.setUserId(userName);
+			baseRoleUserMapper.insert(baseRoleUser);
+			add_base_user_level(Arrays.asList(areaCodeStr.split(",")), roleId, baseRoleUser.getId(), level);
+		} else {
+			HashMap<String, Object> userMap = new HashMap<String, Object>();
+			userMap.put("id", Integer.valueOf(id));
+			userMap.put("roleId", roleId);
+			userMap.put("userName", userName);
+			baseRoleUserMapper.updateUser(userMap);
+		}
+	}
+
+	private void add_base_user_level(List<String> areaCodeList, Integer roleId, Integer userId, String level) {
+
+		if (areaCodeList != null && areaCodeList.size() > 0) {
+			HashMap<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("roleId", roleId);
+			paramMap.put("userName", userId);
+			baseUserLevelMapper.deleteByParamMap(paramMap);
+			for (String dataId : areaCodeList) {
+				BaseUserLevel baseUserLevel = new BaseUserLevel();
+				baseUserLevel.setDataId(Integer.valueOf(dataId));
+				baseUserLevel.setIsCheck(1);
+				baseUserLevel.setLevel(level == null ? 0 : Integer.valueOf(level));
+				baseUserLevel.setRoleId(roleId);
+				baseUserLevel.setUserName(userId + "");
+				baseUserLevelMapper.insert(baseUserLevel);
+			}
+		}
+	}
+}

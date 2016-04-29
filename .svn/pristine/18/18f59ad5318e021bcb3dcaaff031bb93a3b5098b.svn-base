@@ -1,0 +1,193 @@
+package com.zjjf.analysis.services.authority;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseMenu;
+import com.zjjf.analysis.beans.analysis.authority.BaseRole;
+import com.zjjf.analysis.beans.analysis.base.BaseAuthMenu;
+import com.zjjf.analysis.beans.analysis.base.BaseRoleAuth;
+import com.zjjf.analysis.beans.analysis.base.BaseRoleData;
+import com.zjjf.analysis.beans.analysis.base.BaseRoleDataTemplate;
+import com.zjjf.analysis.mapper.analysis.BaseAuthMenuMapper;
+import com.zjjf.analysis.mapper.analysis.BaseMenuMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleAuthMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleDataMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleDataTemplateMapper;
+import com.zjjf.analysis.mapper.analysis.BaseRoleMapper;
+
+@Service
+public class AuthorityRoleServcie {
+
+	private Integer roleAuthId = 1;
+
+	@Autowired
+	private BaseRoleMapper baseRoleMapper;
+
+	@Autowired
+	private BaseMenuMapper baseMenuMapper;
+
+	@Autowired
+	private BaseRoleDataMapper baseRoleDataMapper;
+	
+	@Autowired
+	BaseRoleDataTemplateMapper baseRoleDataTemplateMapper;
+
+	@Autowired
+	private BaseRoleAuthMapper baseRoleAuthMapper;
+
+	@Autowired
+	private BaseAuthMenuMapper baseAuthMenuMapper;
+
+	public List<BaseRole> getRoleList() {
+
+		return baseRoleMapper.getAllRole();
+	}
+
+	public HashMap<String, Object> saveRoleInfo(String id, String roleName, String creater, String authorityKey, String authorityPage,
+			Integer level) {
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		BaseRole baseRole = new BaseRole();
+		add_base_role(baseRole, roleName, creater, level);
+		add_base_auth_menu(Arrays.asList(authorityPage.split(",")), Arrays.asList(authorityKey.split(",")), baseRole.getId(), level);
+		return map;
+	}
+
+	public HashMap<String, Object> overrideRole(Integer roleId) {
+
+		HashMap<String, Object> overrideMap = new HashMap<String, Object>();
+		BaseRole baseRole = baseRoleMapper.getRoleByRoleId(roleId);
+		overrideMap.put("roleName", baseRole.getRoleName());
+		return overrideMap;
+	}
+
+	public List<BaseRole> getRolesOption() {
+
+		return baseRoleMapper.getAllRole();
+	}
+
+	public List<HashMap<String, Object>> getAllMenuTree() {
+
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("level", 1);
+		List<HashMap<String, Object>> menuTree = baseMenuMapper.getAllMenu(paramMap);
+		for (HashMap<String, Object> hashMap : menuTree) {
+			paramMap.clear();
+			Integer menuId = Integer.valueOf("" + hashMap.get("id"));
+			paramMap.put("pid", hashMap.get("id"));
+			paramMap.put("level", 2);
+			List<HashMap<String, Object>> level2Tree = baseMenuMapper.getAllMenu(paramMap);
+			hashMap.put("level2Tree", level2Tree);
+			hashMap.put("authorityKeys", getAuthorityKeysByMenuId(menuId));
+		}
+		return menuTree;
+	}
+
+	protected void add_base_auth_menu(List<String> menuIdList, List<String> dataKeyList, Integer roleId, Integer dataLevel) {
+
+		Integer menuId = 0;
+		// invalid_menu_by_menuId();
+		for (String _menuId : menuIdList) {
+			menuId = Integer.valueOf(_menuId);
+			add_base_role_auth(menuId, roleId);
+		}
+		Integer pid = getParentMenuIdByMenuId(menuId);
+		add_base_role_auth(pid, roleId);
+		add_base_role_data(dataKeyList, pid, roleId, dataLevel);
+	}
+	
+	private Integer getParentMenuIdByMenuId(Integer menuId){
+		
+		BaseMenu baseMenu = baseMenuMapper.getParentMenuIdByMenuId(menuId);
+		if(baseMenu != null){
+			return baseMenu.getPid();
+		}
+		return 0;
+	}
+
+	protected void add_base_role_data(List<String> dataKeyList, Integer menuId, Integer roleId, Integer dataLevel) {
+
+		invalid_datakey_by_menuIdAndRoleId(menuId, roleId);
+
+		for (String datatemplateId : dataKeyList) {
+			updateBaseRoleData(menuId, roleId, datatemplateId, dataLevel);
+		}
+	}
+
+	private List<HashMap<String, Object>> getAuthorityKeysByMenuId(Integer menuId) {
+
+		List<HashMap<String, Object>> resultList = new ArrayList<HashMap<String, Object>>();
+		HashMap<String, Object> dataParam = new HashMap<String, Object>();
+		dataParam.put("menuId", menuId);
+		List<BaseRoleDataTemplate> dataList = baseRoleDataTemplateMapper.getRoleDataTemplate(dataParam);
+		for (BaseRoleDataTemplate bean : dataList) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("id", bean.getId());
+			map.put("code", bean.getAuthkey().trim());
+			map.put("name", bean.getName());
+			resultList.add(map);
+		}
+		return resultList;
+	}
+
+	private void add_base_role(BaseRole baseRole, String roleName, String creater, Integer level) {
+
+		baseRole.setRoleNo(roleName);
+		baseRole.setRoleName(roleName);
+		baseRole.setRoleRemark(roleName);
+		baseRole.setCreateTime(new Date());
+		baseRole.setCreateUser(creater);
+		baseRole.setStatus(1);
+		baseRole.setOrdId(99);
+		baseRole.setLevel(level);
+		baseRole.setIsDelete("1");
+		baseRoleMapper.insert(baseRole);
+	}
+
+	private void add_base_role_auth(Integer menuId, Integer roleId) {
+
+		BaseRoleAuth baseRoleAuth = new BaseRoleAuth();
+		baseRoleAuth.setMenuAuthId(getAuthMenuId(roleAuthId, Integer.valueOf(menuId)));
+		baseRoleAuth.setRoleId(roleId);
+		baseRoleAuthMapper.insert(baseRoleAuth);
+	}
+
+	private void updateBaseRoleData(Integer menuId, Integer roleId, String datatemplateId, Integer dataLevel) {
+
+		BaseRoleData baseRoleData = new BaseRoleData();
+		baseRoleData.setIsChecked(1);
+		baseRoleData.setLevel(dataLevel);
+		baseRoleData.setMenuId(menuId);
+		baseRoleData.setRoleId(roleId);
+		baseRoleData.setDatatemplateId(Integer.valueOf(datatemplateId));
+		baseRoleDataMapper.insert(baseRoleData);
+	}
+
+	private void invalid_datakey_by_menuIdAndRoleId(Integer menuId, Integer roleId) {
+
+		HashMap<String, Object> updateMap = new HashMap<String, Object>();
+		updateMap.put("roleId", roleId);
+		updateMap.put("menuId", menuId);
+		baseRoleDataMapper.updateAllnoChecked(updateMap);
+	}
+
+	private Integer getAuthMenuId(Integer roleAuthId, Integer menuId) {
+
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("authId", roleAuthId);
+		paramMap.put("menuId", menuId);
+		BaseAuthMenu baseAuthMenu = baseAuthMenuMapper.getAuthByMenuIdAndAuthId(paramMap);
+		if (baseAuthMenu != null) {
+			return baseAuthMenu.getId();
+		}
+		return 0;
+	}
+
+}

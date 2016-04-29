@@ -1,0 +1,82 @@
+##商品数据分析
+
+###商品数据分析页面表  `products_page`
+
+字段  | 类型  |  comment | 数据来源表 | 获取方式
+------------- | ------------- | ------------- | ------------- | -------------
+`id`  |  `int(11)`  | `id` | `auto_increment`  | `auto_increment`
+`cityId` |  `int(11)`   | `城市id` | `base_region`  | `base_region.name`
+`areaId`  | `int(11)`  | `区域id`  | `base_region`  | `base_region.name`
+`gridId`  | `varchar(32)`   | `定格id`  | `ana_orderinfo`  | `ana_orderinfo.gridName`
+`barcode` |  `varchar(32)`   | `商品条码` | `base_item_base`  | `base_item_base.mdseId`
+`firstClassifction`  | `varchar(32)`  | `一级分类`  | `base_item_catelog`  | `base_item_catelog.name`
+`scendClassifction`  | `varchar(32)`   | `二级分类`  | `base_item_catelog`  | `base_item_catelog.name`
+`brand` | `varchar(32)`   | `品牌`  | `base_item_base`  | `base_item_base.brand`
+`productName` | `varchar(32)`   | `商品名称`  | `base_item_base`  | `base_item_base.name`
+`specifications`  | `varchar(32)`   | `规格`  | `base_item_base`  | `base_item_base.spec`
+`partnersName`  | `varchar(32)`   |`合作商名称`  | `ana_products`  | `ana_products.orderNo`
+`responsiber`  | `varchar(32)`   | `业务负责人`  | `base_store`  | `base_store.storeId`
+`marketPrice`  | `decimal(10,2)`   | `市场价`  | `base_plant_item`   | `areaPrice`
+`purchasePrice`  | `decimal(10,2)`   | `合作商进货价`  | `base_plant_item`  | `plantDisPrice`
+`shipmentPrice`  | `decimal(10,2)`   |`合作商出货价`  | `base_plant_item`  | `areaPrice`
+`profit`  | `decimal(10,2)`   | `合作商毛利`  | `base_plant_item`  | `maoli`
+`orderTimes`  | `int(8)`   | `下单次数`  | `ana_products`  | `sum(ana_products.id)`
+`saleNums`  | `int(8)`  | `销售数量`  | `ana_products` | `sum(ana_products.saleNums)`
+`salePrice`  | `decimal(10,2)`   | `销售金额`  | `ana_products`  | `sum(ana_products.salePrices)` 
+`productCosts`  | `decimal(10,2)`   | `商品费用`  | `ana_products`  | `ana_products.fee` 
+`costRate`  | `double`   | `费用率`  | `ana_products`  |  `productCosts/salePrice`
+`productStatus`  | `int(2)`   | `商品状态`  | `base_plant_item`  | `base_plant_item.upper or lower`
+`productStatusTime`  | `varchar(32)`   | `商品上下架时间`  | `ana_products`  | `ana_products.deliveryStatus`
+`isExceptionPrice`  | `int(2)`   | `价格异常状态`  | `job作业`  | `batch job`
+`createTime` | `int(11)`   | `新增时间`  | `new Date().int`  | `new Date().int`
+`updateTime`  | `timestamp`   | `修改时间`  | `current_timestamp`  | `current_timestamp`
+
+#####商品数据sql
+
+1.  select  `b.name` as `cityName`, `c.name` as `areaName` from `ana_products` `a` left join `base_region` `b` on `a.cityId` =  `b.cityId` left join `base_region` `c` on `a.aredId` =  `c.aredId`
+
+2.  select  `b.name` as `gridName` from `base_region left` `a` left join `base_sp_group` `b` on `a.sp_group_id` =  `b.id`
+
+3.  select  `b.mdseId` as `barcode`, `b.brand` as `brand`, `b.name` as `productName`, `b.spec` as `specifications`  from `ana_products` `a` left join `base_item_base` `b` on `b.id` =  `a.baseItemId` 
+ 
+4.  select `d.name` as `scendClassifction`, `e.name` as `firstClassifction` from `ana_products` `a` left join `base_plant_item` `b` on `a.baseItemId`=`b.id` left join `base_item_base` `c` on `b.itemBaseId`=`c.id` left join `base_item_catelog` `d` on `d.id`=`c.cateId` left join `base_item_catelog` `e` on `e.id` = `d.pid`
+
+5.  select `p.supplierName` as `partnersName`, `p.managerName` as `managerName` from `ana_products` `a` left join `base_supplier` `b` on `a.spid = b.id` 
+
+6.  select `b.areaPrice` as `marketPrice`, `b.plantDisPrice` as `purchasePrice`, `b.plantDisPrice` as `shipmentPrice`, `b.maoli` as `profit`, `b.upper || b.lower` as `productStatus`, `b.updateTime` as `productStatusTime` from `ana_products` `a` left join `base_plant_item` `b` on `a.planItemId = b.id` 
+
+7.  select  `orderNo`, `parentOrderNo`, sum`(ana_products.productPrice)`, sum`(ana_products.preferentialPrice)`,  sum`(ana_products.profit)`, sum`(ana_products.orderPrices)`, sum`(ana_products.orderCosts)` from `ana_products` group by `ana_products.orderNo`
+
+<br/>
+###商品数据分析中间表  `ana_products`
+
+字段  | 类型  |  comment | 数据来源表 | 获取方式
+------------- | ------------- | ------------- | ------------- | -------------
+`id`  |  `int(11)`  | `id` | `auto_increment`  | `auto_increment`
+`cityId` |  `int(11)`   | `城市id` | `base_region`  | `base_region.name`
+`areaId`  | `int(11)`  | `区域id`  | `base_region`  | `base_region.name`
+`gridId`  | `varchar(32)`   | `定格id`  | `ana_orderinfo`  | `ana_orderinfo.gridName`
+`baseItemId` |  `varchar(32)`   | `base商品Id` | `base_item_base`  | `base_item_base.mdseId`
+`planItemId` |  `varchar(32)`   | `plan商品Id` | `base_item_base`  | `base_item_base.mdseId`
+`spid` |  `varchar(32)`   | `spid` | `base_supplier`  | `base_item_base.mdseId`
+`orderTimes`  | `int(8)`   | `下单次数`  | `ana_sp_orderDetail`  | `count(ana_sp_orderDetail.itemId)`
+`saleNums`  | `int(8)`  | `销售数量`  | `ana_sp_orderDetail` | `sum(ana_sp_orderDetail.saleNums)`
+`salePrices`  | `decimal(10,2)`   | `销售金额`  | `ana_sp_orderDetail`  | `sum(ana_sp_orderDetail.salePrices)` 
+`productCosts`  | `decimal(10,2)`   | `商品费用`  | `ana_sp_orderDetail`  | `sum(ana_sp_orderDetail.fee)`
+`costRate`  | `double`   | `费用率`  | `ana_sp_orderDetail`  |  `productCosts/salePrice`
+`isExceptionPrice`  | `int(2)`   | `价格异常状态`  | `ana_sp_orderDetail`  | `itemId`
+`createTime` | `int(11)`   | `新增时间`  | `new Date().int`  | `new Date().int`
+`updateTime`  | `timestamp`   | `修改时间`  | `current_timestamp`  | `current_timestamp`
+
+#####商品数据分析中间表sql
+
+1.  select `storeId`, `spid`, `itemId` from `ana_sp_orderDetail`
+
+2.  select  `b.id` as `planItemId`, `b.plantDisPrice` as `出货价`, `b.areaPrice` as `市场价` from `ana_sp_orderDetail` `a` left join `base_plan_item` `b` on `b.itemBaseId` =  `a.itemId` 
+
+3.  select  `b.cityId`, `b.areId` from `ana_sp_orderDetail` `a` left join `base_store` `b` on `b.id` =  `a.storeId` 
+
+4.  select `(出货价 > (市场价*1.1))? 1 : 0` as `isExceptionPrice` from `ana_sp_orderDetail`
+  
+5.  select  count(`ana_sp_orderDetail.itemId`) as `orderTimes`, sum(`ana_sp_orderDetail.quantity`) as `saleNums`,  sum(`ana_sp_orderDetail.totalPrice`) as `salePrices`, sum(`ana_sp_orderDetail.maoli`) as `profit`, sum(`ana_sp_orderDetail.fee`) as `productCosts`,  `productCosts`/`salePrices` as `costRate` from `ana_sp_orderDetail` group by `itemId`
+

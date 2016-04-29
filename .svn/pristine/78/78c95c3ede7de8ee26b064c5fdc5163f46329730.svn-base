@@ -1,0 +1,19 @@
+package com.zjjf.analysis.mapper.analysis;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseRoleUser;
+
+public interface BaseRoleUserMapper {
+	
+	int deleteById(Integer id);
+
+	int insert(BaseRoleUser record);
+
+	List<HashMap<String, Object>> getUserList(HashMap<String, Object> paramMap);
+
+	HashMap<String, Object> getById(Integer id);
+
+	void updateUser(HashMap<String, Object> userMap);
+}

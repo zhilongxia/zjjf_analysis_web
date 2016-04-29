@@ -1,0 +1,71 @@
+##全局统计数据分析
+
+###全局统计数据分析页面表  `global_statistics_page`
+
+字段  | 类型  |  comment | 数据来源表 | 获取方式
+------------- | ------------- | ------------- | ------------- | -------------
+`id`  |  `int(11)`  | `id` | `auto_increment`  | `auto_increment`
+`cityId` |  `int(11)`   | `城市id` | `base_region`  | `base_region.name`
+`areaId`  | `int(11)`  | `区域id`  | `base_region`  | `base_region.name`
+`supplierCode` | `varchar(32)`   | `交易订单数量`  | `base_supplier`  | `base_supplier.supplierCode`
+`supplierName`  | `varchar(32)`   | `交易销售数量`  | `base_supplier`  | `base_supplier.supplierName`
+`sku`  | `varchar(32)`   |`交易额`  | ``  | ``
+`deliveryStoreNum`  | `varchar(32)`   | `交易费用金额`  | `ana_supplier`  | `deliveryStoreNum`
+`registerStoreNum`  | `int(4)`   | `交易费用率`  | `ana_supplier`   | `registerStoreNum`
+`businessStoreNum`  | `int(5)`  | `联合采购订单数`  | `ana_supplier`  | `businessStoreNum`
+`offenStoreNum`  | `int(5)`   |`联合采购交易额`  | `ana_supplier`  | `offenStoreNum`
+`orderTimes`  | `int(8)`    | `盈利金额`  | `ana_supplier`  | `orderTimes`
+`saleNums`  | `decimal(10,2)`   | `盈利率`  | `ana_supplier`  | `saleNums`
+`salePrice`  | `decimal(10,2)`  | `便利店总数`  | `ana_supplier` | `salePrice`
+`salePrice`  | `decimal(10,2)`  | `注册店`  | `ana_supplier` | `salePrice`
+`salePrice`  | `decimal(10,2)`  | `活跃店`  | `ana_supplier` | `salePrice`
+`costs`  | `decimal(10,2)`   | `高品店`  | `ana_supplier`  | `costs`
+`costRate`  | `double`   | `营业执照提交数量`  | `ana_supplier`  | `ana_orderinfo.payStatus` 
+`createTime` | `int(11)`   | `新增时间`  | `new Date().int`  | `new Date().int`
+`updateTime`  | `timestamp`   | `修改时间`  | `current_timestamp`  | `current_timestamp`
+
+#####全局统计数据sql
+
+1.  select  `b.name` as `cityName`, `c.name` as `areaName` from `ana_orderinfo` `a` left join `base_region` `b` on `a.cityId` =  `b.cityId` left join `base_region` `c` on `a.aredId` =  `c.aredId`
+
+2.  select  `a.supplierCode` as `supplierCode`, `a.supplierName` as `supplierName` from `base_supplier` `a` 
+
+
+###全局统计数据分析中间表  `ana_global_statistics`
+
+字段  | 类型  |  comment | 数据来源表 | 获取方式
+------------- | ------------- | ------------- | ------------- | -------------
+`id`  |  `int(11)`  | `id` | `auto_increment`  | `auto_increment`
+`cityId` |  `int(11)`   | `城市id` | `base_region`  | `base_region.name`
+`areaId`  | `int(11)`  | `区域id`  | `base_region`  | `base_region.name`
+`gridName`  | `varchar(32)`   | `定格`  | `ana_orderinfo`  | `ana_orderinfo.gridName`
+`supplierCode` | `varchar(32)`   | `全局统计编号`  | `base_supplier`  | `base_supplier.supplierCode`
+`supplierName`  | `varchar(32)`   | `全局统计名称`  | `base_supplier`  | `base_supplier.supplierName`
+`sku`  | `varchar(32)`   |`上架商品sku`  | ``  | ``
+`deliveryStoreNum`  | `varchar(32)`   | `配送便利店数`  | `base_store` | `count(base_store.id)`
+`registerStoreNum`  | `int(5)`   | `注册店`  | `base_sp_orderinfo`   | `count(base_sp_orderinfo.storeId)`
+`businessStoreNum`  | `int(5)`  | `活跃店`  | `base_sp_orderinfo`  | `count(base_sp_orderinfo.storeId)`
+`offenStoreNum`  | `int(5)`   |`高频店`  | `base_sp_orderinfo`  | `count(base_sp_orderinfo.storeId)`
+`orderTimes`  | `int(8)`    | `下单次数`  | `base_sp_orderdetail`  | `count(base_sp_orderdetail.id)`
+`saleNums`  | `decimal(10,2)`   | `销售数量`  | `base_sp_orderdetail`  | `sum(base_sp_order_detail.saleNums)`
+`salePrice`  | `decimal(10,2)`  | `交易额`  | `base_sp_orderdetail` | `sum(base_sp_order_detail.salePrices)`
+`costs`  | `decimal(10,2)`   | `费用金额`  | `base_sp_orderdetail`  | `sum(base_sp_order_detail.fee)`
+`costRate`  | `double`   | `费用率`  | `base_sp_orderdetail`  | `sum(t.fee)/sum(t.totalPrice)` 
+`createTime` | `int(11)`   | `新增时间`  | `new Date().int`  | `new Date().int`
+`updateTime`  | `timestamp`   | `修改时间`  | `current_timestamp`  | `current_timestamp`
+
+#####全局统计数据分析中间表sql
+
+1.  select `r.name` as `areaName` from `base_sp_orderinfo` `a` left join `base_store` `b` on `a.storeId`=`b.id` left join `base_region` `r` on `r.name` = `b.areaId`
+ 
+2.  select `r.name` as `cityName` from `base_sp_orderinfo` `a` left join `base_store` `b` on `a.storeId`=`b.id` left join `base_region` `r` on `r.name` = `b.cityId`
+  
+3.  select `p.supplierCode` as `supplierCode`, `p.supplierName` as `supplierName` from `base_sp_orderdetail` `a` left join `base_sp_orderinfo` `info` on `info.orderId` = `a.orderId2` left join `base_supplier` `p` on `p.id` =  `info.supplierId` 
+
+4.  select count(`t.itemId`) as `orderTimes`, sum(`t.quantity`) as `saleNums`,  sum(`t.totalPrice`) as `salePrices`, sum(`t.maoli`) as `profit`, sum(`t.fee`) as `productCosts`,  sum`(t.fee)`/sum`(t.totalPrice)` as `costRate` from `base_sp_order_detail` `t` left join `Store` `st` ON `st.id = t.storeId` group by `st.areaId`
+ 
+5.  select `st.areaId` as `areaId`, count(`info.storeId`) as `businessStoreNum` from `base_sp_order_info` `info` left join `base_store` `st` on `info.storeId = st.id`  where `info.status not in(1, 6)` and `info.level =1` group by `st.areaId`
+
+6.  select `st.areaId` as `areaId`, count(`info.storeId`) as `offenStoreNum` from `base_sp_order_info` `info` left join `base_store` `st` on `info.storeId = st.id`  where `info.status not in(1, 6)` and `info.level =1` and `info.id` in `(select temp.id` from `base_sp_order_info temp` goup by `temp.storeid` having count`(temp.id) > 3)`  group by `st.areaId`
+
+7.  select `st.areaId` as `areaId` count`(st.id)` as `registerStoreNum` from `base_store` `st` where `st.addTime >= DATE_FORMAT('2016-03-01', '%Y-%m-%d') AND st.addTime <= DATE_FORMAT('2016-03-27', '%Y-%m-%d')` group by `st.areaId` 

@@ -1,0 +1,38 @@
+body{background: #fff}
+img{vertical-align: middle;}
+.wrap{width: 1200px; margin: 0 auto; position: relative; overflow: hidden;}
+
+.headbox{padding:8px 0;  width: 100%; background-color: #2c2f33;}
+.head{ color: #999;}
+.head a{color: #999; padding-left: 15px;}
+.head .wo{float: right;}
+.contontbox{width: 100%;background: url(../images/login-bg.jpg); background-position: center center; background-repeat: no-repeat; background-size: cover;}
+.login-img, .login{float: left;display:inline-block}
+.login-img img{margin-top: 55px;}
+.login .forget{text-align: center;}
+.forget p{margin: 10px 30px 80px;}
+.forget h5{padding-top: 10px;}
+.loginbox{
+	background: rgba(255,255,255,0.2); 
+	box-shadow: 0 0 5px 1px rgba(0,0,0,0.1); 
+	background-color:#fff\0;
+	+background-color:#fff;
+	_background-color:#fff;
+	padding: 33px 44px 44px; 
+	margin: 80px 0 0 100px;
+	display: inline-block;
+}
+.loginbox h1{margin: 0 0 35px; font-size: 24px; font-weight: normal;}
+.loginbox .tip{background-color: #ffebeb; border: 1px solid #e4393c; color:#e4393c;font-size: 12px; padding: 5px; margin-bottom: 10px;}
+.loginbox .tipicon{font-size: 14px; margin: 0px 8px 3px 3px; vertical-align: middle;}
+.loginbox .text{ width:260px; margin-bottom: 20px;background-color: #fff;}
+.form-control{border:1px solid #dcdcdc; height: 36px; line-height: 35px; font-size: 13px; padding-left: 10px;width: 95%; box-shadow: none;}
+.login_select label{font-size:12px;padding-right: 15px;}
+.login_select label input{margin-right: 5px;}
+.login-btn{background-color: #ee4d1d; border:0; width: 260px; height: 40px; font-size: 16px;color: #fff;margin-top: 15px;}
+.login-btn:hover{background-color: #e04011;}
+.safe{ font-size: 12px; margin: 0 0 40px;}
+.safe input{ margin-top: 2px;}
+.safe label{font-weight: normal;}
+.safe a{ float: right;}
+.safe a:hover{color: #ee4d1d;}

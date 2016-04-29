@@ -1,0 +1,22 @@
+package com.zjjf.analysis.services.authority;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.mapper.analysis.BaseUserLevelMapper;
+
+@Service
+public class BaseUserLevelService {
+
+	
+	@Autowired
+	private BaseUserLevelMapper baseUserLevelMapper;
+
+	
+	public void deleteByUserName(String userName) {
+		
+		baseUserLevelMapper.deleteByUserName(userName);
+		
+	}
+
+}

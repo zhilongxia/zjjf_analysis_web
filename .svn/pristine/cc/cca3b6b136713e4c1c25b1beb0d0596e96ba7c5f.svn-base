@@ -1,0 +1,68 @@
+package com.zjjf.analysis.controller.authority;
+
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.zjjf.analysis.common.constants.SessionConfig;
+import com.zjjf.analysis.controller.BaseController;
+import com.zjjf.analysis.services.authority.AuthorityModelServcie;
+
+import net.sf.json.JSONObject;
+
+@Controller
+@RequestMapping({ "/api/authority/role" })
+public class AuthorityRoleController extends BaseController {
+
+	@Autowired
+	private AuthorityModelServcie authorityServcie;
+
+	@RequestMapping(value = "/loadPage.do")
+	public String loaded(HttpServletRequest request) {
+
+		return "analysis/authority/roles";
+	}
+
+	/**
+	 * 添加角色
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/addRoles.do")
+	public @ResponseBody HashMap<String, Object> addRoles(HttpServletRequest request, @RequestBody JSONObject jsonObj) {
+
+		String userId = (String) SecurityUtils.getSubject().getSession().getAttribute(SessionConfig.userId);
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		authorityServcie.addRoles(jsonObj, userId);
+
+		resultMap.put("exitRoles", authorityServcie.getRolesOption());
+		resultMap.put("menuTree", authorityServcie.getAllMenuTree());
+		return resultMap;
+	}
+
+	/**
+	 * 添加角色
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/overrideRole.do")
+	public @ResponseBody HashMap<String, Object> overrideRole(HttpServletRequest request) {
+
+		Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		authorityServcie.overrideRole(roleId);
+
+		resultMap.put("roleOption", authorityServcie.getRolesOption());
+		resultMap.put("menuTree", authorityServcie.getAllMenuTree());
+		return resultMap;
+	}
+}

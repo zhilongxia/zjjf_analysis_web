@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>系统用户管理</title>
+    <link href="../../resources/images/favicon.png" rel="icon" type="image/x-icon" />
+    <link href="../../resources/css/normalize.css" rel="stylesheet" type="text/css">
+    <link href="../../resources/css/base.css" rel="stylesheet" type="text/css">
+    <script src="../../resources/vendor/jquery/jquery-1.12.3.min.js"></script>
+
+    <script src="../../resources/vendor/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../resources/js/comm.js"></script>
+</head>
+<body class="wrap-bd">
+<div class="mb-default">
+    <a href="" class="crumb">权限设置</a>
+    <a href="" class="crumb crumb-active">用户管理</a>
+</div>
+<div class="op-section mb-small clearfix">
+    <form class="fl">
+        <select class="select">
+            <option value="0" selected="selected">全部角色</option>
+        </select>
+        <input class="input input-search-text" type="text" name="" value="" placeholder="用户名">
+        <label class="ml-default">创建时间</label>
+        <input type="text" class="input input-date J_timeS"> 至
+        <input type="text" class="input input-date J_timeE">
+        <span class="pills pills-active ml-default">昨天</span>
+        <span class="pills">最近7天</span>
+        <span class="pills">最近30天</span>
+        <input class="input input-search-button ml-default" value="搜索" type="submit">
+    </form>
+    <div class="fr">
+        <a href="user-edit.html" class="button button-white">创建用户</a>
+    </div>
+</div>
+<table class="table-list table-border">
+    <thead class="table-thead">
+    <tr>
+        <th>用户名</th>
+        <th>角色名</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody class="table-tbody">
+        <tr>
+            <td>suying</td>
+            <td>运营经理</td>
+            <td>2015/11/26 10:00:00</td>
+            <td class="table-op">
+                <a href="">
+                    <i class="icon-op icon-op-edit"></i>
+                    编辑
+                </a>
+                <a href="" class="ml-default">
+                    <i class="icon-op icon-op-del"></i>
+                    删除
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script>
+    $(function() {
+        dateRangeSimple('.J_timeS', '.J_timeE');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+package com.zjjf.analysis.services.authority;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zjjf.analysis.beans.analysis.authority.BaseRole;
+import com.zjjf.analysis.beans.analysis.authority.BaseRoleUser;
+import com.zjjf.analysis.beans.analysis.base.AnaDictionary;
+import com.zjjf.analysis.beans.analysis.base.BaseUserLevel;
+import com.zjjf.analysis.beans.analysis.base.CustomerService;
+import com.zjjf.analysis.mapper.origin.CustomerServiceMapper;
+import com.zjjf.analysis.services.AbstractBaseService;
+
+@Service
+public class AuthorityUserService extends AbstractBaseService {
+
+	@Autowired
+	private BaseRoleUserService baseRoleUserService;
+	
+	@Autowired
+	private BaseRoleService baseRoleService;
+
+	@Autowired
+	private BaseUserLevelService baseUserLevelService;
+	
+	@Autowired
+	private CustomerServiceMapper customerServiceMapper;
+
+	/* @Transactional(propagation = Propagation.SUPPORTS, readOnly = true) */
+	public void deleteUser(Integer id) {
+
+		baseRoleUserService.deleteById(id);
+		baseUserLevelService.deleteByRoleUserId(id);
+	}
+
+	/* @Transactional(propagation = Propagation.SUPPORTS, readOnly = true) */
+	public void saveUserInfo(Integer id, Integer roleId, String creater, String userName, String areaCodeStr) {
+
+		if (areaCodeStr != null && areaCodeStr.length() > 0) {
+			BaseRoleUser baseRoleUser = new BaseRoleUser();
+			save_base_role_user(baseRoleUser, id, roleId, userName, areaCodeStr);
+		}
+	}
+
+	public List<AnaDictionary> getDataList() {
+
+		return getRegionCodeList(3, 6);
+	}
+	
+	public List<AnaDictionary> getAreaDataList(Integer roleId, Integer id) {
+		
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("roleId", roleId);
+		paramMap.put("roleUserId", id);
+		return baseUserLevelService.getBaseAreaList(paramMap);
+	}
+
+	public HashMap<String, Object> getUserInfo(Integer id) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		if (id == 0) {
+			resultMap.put("level", 2);
+			return resultMap;
+		}
+		return baseRoleUserService.getById(id);
+	}
+
+	public List<HashMap<String, Object>> getUserList(HashMap<String, Object> paramMap) {
+
+		return baseRoleUserService.getUserList(paramMap);
+	}
+	
+	public List<CustomerService> getLoginUserList() {
+
+		return baseRoleUserService.getLoginUserList();
+	}
+	
+	public Integer getTotalCount() {
+		
+		return baseRoleUserService.getTotalCount();
+	}
+	
+	public List<String> getUserSelected(HashMap<String, Object> userInfoMap) {
+
+		List<String> dataList = new ArrayList<String>();
+		if (!userInfoMap.containsKey("id")) {
+			return dataList;
+		}
+		Integer roleId = Integer.valueOf(userInfoMap.get("roleId") + "");
+		Integer roleUserId = Integer.valueOf(userInfoMap.get("id") + "");
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("roleId", roleId);
+		paramMap.put("roleUserId", roleUserId);
+		List<BaseUserLevel> listLevel = baseUserLevelService.getDataByMap(paramMap);
+		for (BaseUserLevel bean : listLevel) {
+			dataList.add(bean.getDataId() + "");
+		}
+		return dataList;
+	}
+
+	private void save_base_role_user(BaseRoleUser baseRoleUser, Integer id, Integer roleId, String userName, String areaCodeStr) {
+
+		boolean active = (id == 0 ? true : false);
+		if (active) {
+			baseRoleUserService.insert(baseRoleUser, roleId, userName);
+		} else {
+			baseRoleUserService.updateUser(id, roleId, userName);
+		}
+		BaseRole baesRole = baseRoleService.getRoleByRoleId(roleId);
+		save_base_user_level(Arrays.asList(areaCodeStr.split(",")), roleId, active ? baseRoleUser.getId() : Integer.valueOf(id), baesRole.getLevel());
+	}
+
+	private void save_base_user_level(List<String> areaCodeList, Integer roleId, Integer roleUserId, Integer level) {
+
+		if (areaCodeList != null && areaCodeList.size() > 0) {
+			HashMap<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("roleId", roleId);
+			paramMap.put("roleUserId", roleUserId);
+			baseUserLevelService.deleteByParamMap(paramMap);
+			for (String dataId : areaCodeList) {
+				BaseUserLevel baseUserLevel = new BaseUserLevel();
+				baseUserLevel.setDataId(Integer.valueOf(dataId));
+				baseUserLevel.setIsCheck(1);
+				baseUserLevel.setLevel(level == null ? 0 : Integer.valueOf(level));
+				baseUserLevel.setRoleId(roleId);
+				baseUserLevel.setRoleUserId(roleUserId);
+				baseUserLevelService.insert(baseUserLevel);
+			}
+		}
+	}
+
+	public HashMap<String, Object> getAreaByCityId(Integer cityId, Integer roleUserId) {
+
+		List<String> idList = new ArrayList<String>();
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		HashMap<String, Object> cityMap = new HashMap<String, Object>();
+		cityMap.put("cityId", cityId);
+		cityMap.put("regionLevel", 4);
+		cityMap.put("roleUserId", roleUserId);
+		List<AnaDictionary> areaList = super.baseRegionMapper.getAreaByCityId(cityMap);
+		resultMap.put("areaList", areaList);
+		for (AnaDictionary bean : areaList) {
+			if (bean.getIsCheck() != null && bean.getIsCheck() == 1) {
+				idList.add(bean.getCode());
+			}
+		}
+		resultMap.put("userSelected", idList);
+		return resultMap;
+	}
+	
+	public Integer userNameRegular(String userName){
+		
+		CustomerService userInfo = customerServiceMapper.getUserByCustomerServiceCredential(userName);
+		
+		if(userInfo != null){
+			return 1;
+		}
+		return 0;
+	}
+}

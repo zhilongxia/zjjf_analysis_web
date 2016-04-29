@@ -1,0 +1,142 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="zh-CN" ng-app="user_grant">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>系统用户添加/编辑</title>
+    <%@ include file="../../common/head.jsp"%>
+    <script src="<%=request.getContextPath() %>/resources/js/angular/angular.js"></script>
+</head>
+<body class="wrap-bd" ng-controller="userInfoController">
+<input type="hidden" name="name" class="input input-default" value=${id } id="user_id">
+<div class="mb-default">
+    <a href="" class="crumb">权限设置</a>
+    <a href="" class="crumb">用户管理</a>
+    <a href="" class="crumb crumb-active">用户创建/编辑</a>
+</div>
+<div class="wrap-bd bg">
+    <div>
+        <label class="label">用户名：</label>
+        <input type="text" name="name" class="input input-default" ng-model="userInfo.userName">
+    </div>
+    <p>
+        <label class="label">角色：</label>
+        <select class="select" ng-model="selectRole" ng-options="row_map.id as row_map.roleName for row_map in roleList">
+		    <option value="">全部角色</option>
+		</select>
+    </p>
+    <div class="clearfix">
+        <label class="label fl">用户数据权限：</label>
+        <div class="fl" style="min-width: 200px; width: 85%; margin-left: 4px;">
+        	<select class="select" ng-model="selectCity" ng-options="v.code as v.name for v in dataMap.listDict" ng-change="changeCity()">
+			    <option value="">全部城市</option>
+			</select>
+            <p ng-show="visible"> 
+                <span style="display: inline-block; width: 100px; height: 20px; overflow:hidden;" ng-repeat="b in areaList"><input type="checkbox" name="role" class="checkbox">{{b.name}}</span>
+            </p>
+        </div>
+    </div>
+    <div>
+        <button class="button button-ok">保存</button>
+        <button class="button button-cancel">取消</button>
+    </div>
+</div>
+<script>
+    
+    var root = '<%=request.getContextPath() %>';
+    var loadUserInfo_url = root + '/api/authority/user/getEditUserView.do';
+    var changeCity_url = root + '/api/base_core/getAreaByCityId.do';
+    
+    var app = angular.module('user_grant',[]); // 第二个参数定义了Module依赖 
+    app.config(function($httpProvider) {
+        $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded';
+        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+        $httpProvider.defaults.transformRequest = [function(data) {
+            var param = function(obj) {
+                var query = '';
+                var name, value, fullSubName, subName, subValue, innerObj, i;
+                for (name in obj) {
+                    value = obj[name];
+                    if (value instanceof Array) {
+                        for (i = 0; i < value.length; ++i) {
+                            subValue = value[i];
+                            fullSubName = name + '[' + i + ']';
+                            innerObj = {};
+                            innerObj[fullSubName] = subValue;
+                            query += param(innerObj) + '&';
+                        }
+                    } else if (value instanceof Object) {
+                        for (subName in value) {
+                            subValue = value[subName];
+                            fullSubName = name + '[' + subName + ']';
+                            innerObj = {};
+                            innerObj[fullSubName] = subValue;
+                            query += param(innerObj) + '&';
+                        }
+                    } else if (value !== undefined && value !== null) {
+                        query += encodeURIComponent(name) + '='
+                                + encodeURIComponent(value) + '&';
+                    }
+                }
+                return query.length ? query.substr(0, query.length - 1) : query;
+            };
+            return angular.isObject(data) && String(data) !== '[object File]'
+                    ? param(data)
+                    : data;
+        }];
+    });
+
+    app.controller('userInfoController', ['$scope', 'loadUserInfoService', 'getAreaByCityIdService', function ($scope, loadUserInfoService, getAreaByCityIdService) {
+
+		var loadPage = function(){
+			$scope.getUserInfo();
+    	}
+		var id = document.getElementById("user_id").value;
+		$scope.getUserInfo = function() {
+			var data = {id : id};
+			loadUserInfoService.list(data).success(function (result) {
+				$scope.roleList = result.roleList;
+	    		$scope.userInfo = result.userInfo;
+	    		$scope.dataMap = result.dataMap;
+	    		if(result.dataMap.level = 1){
+	    			$scope.visible = false;
+	    		}
+            });	
+		}
+		// 根据城市获取区域
+    	$scope.changeCity = function(){
+    		var data = {"cityId" : ($scope.selectCity || null)};
+    		getAreaByCityIdService.list(data).success(function (result) {
+    			$scope.areaList = result;
+    			$scope.visible = true;
+            });	
+    	}
+        $scope.$watch('viewContentLoaded', loadPage);
+    }]);
+    
+    app.factory('loadUserInfoService', ['$http', function ($http) {
+        var list = function (postData) {
+            return $http.post(loadUserInfo_url, postData);
+        }
+        return {
+            list: function (postData) {
+                return list(postData);
+            }
+        }
+    }]);
+    
+    // 获取城市区域
+    app.factory('getAreaByCityIdService', ['$http', function ($http) {
+        var list = function (postData) {
+            return $http.post(changeCity_url, postData);
+        }
+        return {
+            list: function (postData) {
+                return list(postData);
+            }
+        }
+    }]);
+</script>
+</body>
+</html>

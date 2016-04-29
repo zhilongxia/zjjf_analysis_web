@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.BaseRoleUserMapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.authority.BaseRoleUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="roleId" property="roleId" jdbcType="INTEGER" />
+    <id column="userId" property="userId" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleUser" >
+    delete from base_role_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleUser" >
+    insert into base_role_user (roleId, userId)
+    values (#{roleId,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zjjf.analysis.beans.analysis.authority.BaseRoleUser" >
+    insert into base_role_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="userId != null" >
+        userId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getUserList" resultType="java.util.Map" parameterType="java.lang.Integer">
+  	 select t1.id,
+  	        t1.roleId, 
+  	        t1.userId as userName, 
+  	        date_format(t1.createTime, '%Y-%m-%d') as createTime,
+  	        t2.`roleName`,
+  	        t2.`level`
+  	  from base_role_user t1 left join base_role t2 on t2.id = t1.`roleId`
+  	  <where>
+  	  	  <if test="roleId != null and roleId != ''">
+	          and t1.userId = #{userId}
+	      </if>
+	      <if test="userName != null and userName != ''">
+	          and (t1.userId like "%"#{userName}"%")
+	      </if>
+	      <if test="createTimeBegin != null and createTimeBegin != '' " >
+	      	and date_format(t1.createTime, '%Y-%m-%d') &gt;= #{createTimeBegin}
+	      </if>
+	      <if test="createTimeEnd != null and createTimeEnd != '' " >
+	      	and date_format(t1.createTime, '%Y-%m-%d') &lt;= #{createTimeEnd}
+	      </if>
+  	  </where>
+  	  <if test="offset != null and offset != '' and pageNo != null and pageNo != '' " >
+	      limit #{pageNo}, #{offset}
+	  </if>
+  </select>
+  
+  <select id="getById" resultType="java.util.Map" parameterType="java.lang.Integer">
+  	 select t1.id,
+  	        t1.roleId, 
+  	        t1.userId as userName, 
+  	        date_format(t1.createTime, '%Y-%m-%d') as createTime,
+  	        t2.`roleName`,
+  	        t2.`level`
+  	  from base_role_user t1 left join base_role t2 on t2.id = t1.`roleId`
+		where t1.id = #{id}
+  </select>
+  
+  <update id="updateUser" parameterType="java.util.Map" >
+    update base_role_user
+    <set >
+      <if test="roleId != null" >
+        roleId = #{roleId},
+      </if>
+      <if test="userName != null" >
+        userId = #{userName},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+</mapper>
