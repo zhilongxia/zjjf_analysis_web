@@ -1,0 +1,112 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>转角店宝 - 数据分析</title>
+    <%@ include file="../../common/head.jsp"%>
+    <%@ include file="../../common/datepicker.jsp"%>
+    <%@ include file="../../common/pagination.jsp"%>
+    <script>
+        var app = angular.module('app', ['My97Ext', 'tm.pagination']);
+        app.controller('paginationCtrl', function($scope, $http){
+            $scope.paginationConf = {
+                currentPage: 1,
+                totalItems: 8000,
+                itemsPerPage: 15,
+                pagesLength: 15,
+                perPageOptions: [10, 20, 30, 40, 50],
+                onChange: function(){
+//                    $http.get('xxx', function(data) {
+//                        $scope.paginationConf.totalItems = data.totalItems;
+//                    })
+                }
+            };
+        })
+    </script>
+</head>
+<body class="wrap-bd" ng-app="app">
+<div class="mb-default">
+    <a href="" class="crumb">便利店数据分析</a>
+    <a href="" class="crumb crumb-active">便利店明细报表</a>
+</div>
+<div class="op-section">
+    <select class="select">
+        <option value="">全部城市</option>
+    </select>
+    <select class="select">
+        <option value="">全部区域</option>
+    </select>
+    <select class="select">
+        <option value="">全部定格</option>
+    </select>
+    <select class="select">
+        <option value="">全部状态</option>
+    </select>
+    <input type="text" placeholder="便利店ID/编号/名称" class="input input-search-text ml-default">
+</div>
+<div class="op-section clearfix">
+    <div class="fl">
+        注册时间
+        <input id="timeStart" class="input input-date" type="text" ng-model="timeStart" date-picker>
+        至
+        <input id="timeEnd" class="input input-date" type="text" ng-model="timeEnd" date-picker>
+        <span class="pills pills-active ml-default">昨天</span>
+        <span class="pills">最近7天</span>
+        <span class="pills">最近30天</span>
+    </div>
+    <div class="fr">
+        <input type="button" class="input input-search-button" value="确定">
+        <input type="button" class="input input-search-button-white" value="导出">
+    </div>
+</div>
+<div>
+    <table class="table-list">
+        <thead class="table-thead">
+        <tr>
+            <th colspan="3">归属信息</th>
+            <th colspan="9">便利店信息</th>
+            <th colspan="2">便利店负责人</th>
+        </tr>
+        <tr>
+            <th>城市</th>
+            <th>区域</th>
+            <th>定格</th>
+            <th>便利店ID</th>
+            <th>便利店编号</th>
+            <th>便利店名称</th>
+            <th>便利店联系人</th>
+            <th>便利店手机号码</th>
+            <th>便利店注册时间</th>
+            <th>便利店常用手机型号</th>
+            <th>便利店状态</th>
+            <th>营业执照</th>
+            <th>便利店负责业务员</th>
+            <th>业务员手机号码</th>
+        </tr>
+        </thead>
+        <tbody class="table-tbody">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-controller="paginationCtrl">
+    <tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+package com.zjjf.analysis.controller.basecore;
+
+import java.util.HashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.zjjf.analysis.controller.BaseController;
+import com.zjjf.analysis.services.core.BaseCoreService;
+
+@Controller
+@RequestMapping(value = "/api/base_core")
+public class BaseCoreController extends BaseController {
+
+	@Autowired
+	private BaseCoreService baseCoreService;
+
+	@RequestMapping(value = "/getCityAreaGroupById.do")
+	@ResponseBody
+	public HashMap<String, Object> getCityAreaGroupById(@RequestBody HashMap<String, Object> paramMap) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		Integer type = Integer.valueOf(paramMap.get("type") + "");
+		if (type == 1) {
+			String cityId = paramMap.get("cityId") + "";
+			resultMap.put("areaSelect", baseCoreService.getAreaByCityId(cityId));
+			HashMap<String, Object> spGroupMap = new HashMap<String, Object>();
+			spGroupMap.put("cityId", cityId);
+			resultMap.put("spGroupIdSelect", baseCoreService.getGridByParam(spGroupMap));
+			return resultMap;
+		} else if (type == 2) {
+			String areaId = paramMap.get("areaId") + "";
+			String cityId = paramMap.get("cityId") + "";
+			HashMap<String, Object> spGroupMap = new HashMap<String, Object>();
+			spGroupMap.put("areaId", areaId);
+			spGroupMap.put("cityId", cityId);
+			resultMap.put("spGroupIdSelect", baseCoreService.getGridByParam(spGroupMap));
+			return resultMap;
+		}
+		return resultMap;
+	}
+}
