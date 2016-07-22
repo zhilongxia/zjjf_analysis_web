@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjjf.analysis.mapper.analysis.SupportOrderPageV2Mapper" >
+  <resultMap id="BaseResultMap" type="com.zjjf.analysis.beans.analysis.orders.SupportOrderPageV2" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cityId" property="cityId" jdbcType="INTEGER" />
+    <result column="areaId" property="areaId" jdbcType="INTEGER" />
+    <result column="storeId" property="storeId" jdbcType="INTEGER" />
+    <result column="spGroupId" property="spGroupId" jdbcType="INTEGER" />
+    <result column="addTime" property="addTime" jdbcType="VARCHAR" />
+    <result column="orderNo" property="orderNo" jdbcType="VARCHAR" />
+    <result column="chirdOrderNo" property="chirdOrderNo" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="sku" property="sku" jdbcType="INTEGER" />
+    <result column="goodsPrice" property="goodsPrice" jdbcType="DECIMAL" />
+    <result column="freight" property="freight" jdbcType="DECIMAL" />
+    <result column="coupon" property="coupon" jdbcType="DECIMAL" />
+    <result column="rebate" property="rebate" jdbcType="DECIMAL" />
+    <result column="orderPrice" property="orderPrice" jdbcType="DECIMAL" />
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="supportmetho" property="supportmetho" jdbcType="INTEGER" />
+    <result column="supportStatus" property="supportStatus" jdbcType="INTEGER" />
+    <result column="supplierId" property="supplierId" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="createTime" property="createTime" jdbcType="INTEGER" />
+    <result column="payMoney" property="payMoney" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, cityId, areaId, storeId, spGroupId, addTime, orderNo, chirdOrderNo, quantity, 
+    sku, goodsPrice, freight, coupon, rebate, orderPrice, fee, supportmetho, supportStatus, 
+    supplierId, status, updateTime, createTime, payMoney
+  </sql>
+  
+  <select id="getOrderData" resultType="java.util.Map" parameterType="java.util.Map" >
+    select  
+        <if test="querycityName != null and querycityName != '' " >
+	      t3.`name` AS "cityName",
+	    </if>
+	    <if test="queryareaName != null and queryareaName != '' " >
+	      t2.`name` AS "areaName",
+	    </if>
+	    <if test="querystoreName != null and querystoreName != '' " >
+	      t6.name as "storeName",
+	    </if>
+	     <if test="querystoreMobile != null and querystoreMobile != '' " >
+	      t6.mobile as "storeMobile",
+	    </if>
+	    <if test="queryspGroupName != null and queryspGroupName != '' " >
+	      t5.name as "spGroupName",
+	    </if>
+	    <if test="queryaddTime != null and queryaddTime != '' " >
+	      date_format(t1.addTime, '%Y-%m-%d %h:%i:%s') AS "addTime",
+	    </if>
+		<if test="queryorderNo != null and queryorderNo != '' " >
+	      t1.orderNo, 
+	    </if>
+	    <if test="querychirdOrderNo != null and querychirdOrderNo != '' " >
+	      t1.chirdOrderNo,
+	    </if>
+	    <if test="queryquantity != null and queryquantity != '' " >
+	      t1.quantity,
+	    </if>
+	    <if test="querysku != null and querysku != '' " >
+	      t1.sku,
+	    </if>
+	    <if test="querygoodsPrice != null and querygoodsPrice != '' " >
+	      t1.goodsPrice,
+	    </if>
+	    <if test="queryfreight != null and queryfreight != '' " >
+	      t1.freight,
+	    </if>
+	    <if test="querypayMoney != null and querypayMoney != '' " >
+	      t1.payMoney,
+	    </if>
+	    <if test="querycoupon != null and querycoupon != '' " >
+	      t1.coupon,
+	    </if>
+	    <if test="queryrebate != null and queryrebate != '' " >
+	      t1.rebate,
+	    </if>
+	    <if test="queryorderPrice!= null and queryorderPrice != '' " >
+	      t1.orderPrice,
+	    </if>
+    	<if test="querysupportmetho!= null and querysupportmetho != '' " >
+	      	 case
+			    when t1.`supportmetho` = 1
+			    then '快钱支付'
+			    when t1.`supportmetho` = 2
+			    then '货到付款'
+			    when t1.`supportmetho` = 3
+			    then '支付宝支付'
+			    when t1.`supportmetho` = 4
+			    then '微信支付'
+			    else '' 
+			  end as "supportmetho",
+	    </if>
+	    <if test="querysupportStatus!= null and querysupportStatus != '' " >
+	      	 case
+			    when t1.`supportStatus` = 0
+			    then '未支付'
+			    when t1.`supportStatus` = 1
+			    then '已支付'
+			    else '' 
+			  end as "supportStatus",
+	    </if>
+    	<if test="querysupplierName!= null and querysupplierName != '' " >
+	      	t4.supplierName,
+	    </if>
+    	<if test="querystatus!= null and querystatus != '' " >
+	      	case
+			    when t1.`status` = 1
+			    then '已下单'
+			    when t1.`status` = 2
+			    then '已派单'
+			    when t1.`status` = 3
+			    then '已提单'
+			    when t1.`status` = 4
+			    then '已打印'
+			    when t1.`status` = 5
+			    then '已送达'
+			    when t1.`status` = 6
+			    then '已取消' 
+			    else '' 
+			end as "status",
+	    </if>
+    	t1.updateTime, 
+    	t1.createTime
+     from support_order_page_v2 t1
+      <if test="queryareaName != null and queryareaName != '' " >
+      	  left join `base_region` t2 on t1.`areaId` = t2.`id`
+      </if>
+	  <if test="querycityName != null and querycityName != '' " >
+	      left join `base_region` t3 on t1.cityId = t3.id
+	  </if>
+	  <if test="querysupplierName!= null and querysupplierName != '' " >
+      	  left join `base_supplier` t4 on t4.id = t1.`supplierId`
+      </if>
+	  <if test="queryspGroupName != null and queryspGroupName != '' " >
+      	  left join `base_spgroup` t5 on t5.id = t1.`spGroupId`
+      </if>
+      <if test="querystoreName != null and querystoreName != '' " >
+      	  left join `base_store` t6 on t6.id = t1.`storeId`
+      </if>
+      <where>
+	      <if test="areaIdList != null and areaIdList != '' " >
+  		  	  t1.areaId in 
+	          <foreach collection="areaIdList" index="index" item="item" open="(" separator="," close=")">
+	            #{item}
+	          </foreach> 
+	      </if>
+	      <if test="cityIdList != null and cityIdList != '' " >
+  		  	  t1.cityId in 
+	          <foreach collection="cityIdList" index="index" item="item" open="(" separator="," close=")">
+	            #{item}
+	          </foreach> 
+	      </if>
+		  <if test="areaId != null and areaId != '' " >
+	      	and t1.areaId = #{areaId}
+	      </if>
+	      <if test="cityId != null and cityId != '' " >
+	      	and t1.cityId = #{cityId}
+	      </if>
+	      <if test="spGroupId != null and spGroupId != '' " >
+	      	and t1.spGroupId = #{spGroupId}
+	      </if>
+	      <if test="supportmetho != null and supportmetho != '' " >
+	      	and t1.supportmetho = #{supportmetho}
+	      </if>
+	      <if test="supportStatus != null and supportStatus != '' " >
+	      	and t1.supportStatus = #{supportStatus}
+	      </if>
+	      <if test="status != null and status != '' " >
+	      	and t1.status = #{status}
+	      </if>
+	      <if test="orderNos != null and orderNos != '' " >
+	      	and (t1.chirdOrderNo like "%"#{orderNos}"%" or t1.orderNo like "%"#{orderNos}"%")
+	      </if>
+ 	      <if test="storeName != null and storeName != '' " >
+	      	and t6.name like "%"#{storeName}"%"
+	      </if>
+	      <if test="supplierName != null and supplierName != '' " >
+	      	and t4.supplierName like "%"#{supplierName}"%"
+	      </if>
+	      <if test="addTimeBegin != null and addTimeBegin != '' " >
+	      	and DATE_FORMAT(t1.addTime, '%Y-%m-%d') &gt;= #{addTimeBegin}
+	      </if>
+	      <if test="addTimeEnd != null and addTimeEnd != '' " >
+	      	and DATE_FORMAT(t1.addTime, '%Y-%m-%d') &lt;= #{addTimeEnd}
+	      </if>
+	  </where>
+	  order by t1.id desc limit #{pageNo}, #{offset}
+  </select>
+  
+  <select id="getTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map" >
+	  select count(1)
+	  from support_order_page_v2 t1
+      <if test="queryareaName != null and queryareaName != '' " >
+      	  left join `base_region` t2 on t1.`areaId` = t2.`id`
+      </if>
+	  <if test="querycityName != null and querycityName != '' " >
+	      left join `base_region` t3 on t1.cityId = t3.id
+	  </if>
+	  <if test="querysupplierName!= null and querysupplierName != '' " >
+      	  left join `base_supplier` t4 on t4.id = t1.`supplierId`
+      </if>
+	  <if test="queryspGroupName != null and queryspGroupName != '' " >
+      	  left join `base_spgroup` t5 on t5.id = t1.`spGroupId`
+      </if>
+      <if test="querystoreName != null and querystoreName != '' " >
+      	  left join `base_store` t6 on t6.id = t1.`storeId`
+      </if>
+      <where>
+	      <if test="areaIdList != null and areaIdList != '' " >
+  		  	  t1.areaId in 
+	          <foreach collection="areaIdList" index="index" item="item" open="(" separator="," close=")">
+	            #{item}
+	          </foreach> 
+	      </if>
+	      <if test="cityIdList != null and cityIdList != '' " >
+  		  	  t1.cityId in 
+	          <foreach collection="cityIdList" index="index" item="item" open="(" separator="," close=")">
+	            #{item}
+	          </foreach> 
+	      </if>
+		  <if test="areaId != null and areaId != '' " >
+	      	and t1.areaId = #{areaId}
+	      </if>
+	      <if test="cityId != null and cityId != '' " >
+	      	and t1.cityId = #{cityId}
+	      </if>
+	      <if test="spGroupId != null and spGroupId != '' " >
+	      	and t1.spGroupId = #{spGroupId}
+	      </if>
+	      <if test="supportmetho != null and supportmetho != '' " >
+	      	and t1.supportmetho = #{supportmetho}
+	      </if>
+	      <if test="supportStatus != null and supportStatus != '' " >
+	      	and t1.supportStatus = #{supportStatus}
+	      </if>
+	      <if test="status != null and status != '' " >
+	      	and t1.status = #{status}
+	      </if>
+	      <if test="orderNos != null and orderNos != '' " >
+	      	and (t1.chirdOrderNo like "%"#{orderNos}"%" or t1.orderNo like "%"#{orderNos}"%")
+	      </if>
+ 	      <if test="storeName != null and storeName != '' " >
+	      	and t6.name like "%"#{storeName}"%"
+	      </if>
+	      <if test="supplierName != null and supplierName != '' " >
+	      	and t4.supplierName like "%"#{supplierName}"%"
+	      </if>
+	      <if test="addTimeBegin != null and addTimeBegin != '' " >
+	      	and DATE_FORMAT(t1.addTime, '%Y-%m-%d') &gt;= #{addTimeBegin}
+	      </if>
+	      <if test="addTimeEnd != null and addTimeEnd != '' " >
+	      	and DATE_FORMAT(t1.addTime, '%Y-%m-%d') &lt;= #{addTimeEnd}
+	      </if>
+	  </where>
+   </select>
+  
+</mapper>

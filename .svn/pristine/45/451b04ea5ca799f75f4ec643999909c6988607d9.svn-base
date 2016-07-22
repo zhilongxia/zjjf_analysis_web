@@ -1,0 +1,29 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<style>
+    #header {
+        min-width: 716px;
+        height: 70px;
+        line-height: 60px;
+        background: #fff;
+        font-size: 14px;
+    }
+    #header .info {
+        float: right;
+        position: relative;
+        right: 20px;
+        color: #d3d6df;
+    }
+    #header .info a {
+        color: #007fbf;
+        text-decoration: none;
+    }
+    #header .info a:hover {
+        text-decoration: underline
+    }
+    #header .username {
+        color: #666;
+    }
+</style>
+<header id="header">
+    <div class="info"><span class="username mr-small">您好&nbsp;&nbsp;${logInVo.userName }</span> | <a class="ml-small" href="<%=request.getContextPath() %>/analysis/authority/doLoginOut.do">退出</a></div>
+</header>

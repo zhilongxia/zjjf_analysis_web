@@ -1,0 +1,84 @@
+package com.zjjf.analysis.controller.controller;
+
+import java.util.HashMap;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.dubbo.config.annotation.Reference;
+import com.zjjf.analysis.producer.ajie.ISpGroupTurnoverService;
+import com.zjjf.analysis.producer.ajie.ISpOrderDetailService;
+import com.zjjf.analysis.producer.ajie.IStoreTurnoverService;
+import com.zjjf.analysis.producer.ajie.ISupplierTurnoverService;
+
+@SuppressWarnings({ "rawtypes", "unchecked" })
+@Controller
+@RequestMapping(value = "/ajie/api")
+public class AjieController {
+
+	@Reference(version = "1.0.0")
+	private ISpGroupTurnoverService spGroupTurnoverService;
+
+	@Reference(version = "1.0.0")
+	private IStoreTurnoverService storeTurnoverService;
+
+	@Reference(version = "1.0.0")
+	private ISupplierTurnoverService supplierTurnoverService;
+
+	@Reference(version = "1.0.0")
+	private ISpOrderDetailService spOrderDetailService;
+
+	@RequestMapping(value = "/storeData.do", method = RequestMethod.GET)
+
+	public @ResponseBody HashMap<String, Object> storeData(
+			@RequestParam(value = "dayTime", required = false, defaultValue = "") String dayTime,
+			@RequestParam(value = "supplierCode", required = false, defaultValue = "") Integer storeId) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("dayTime", dayTime);
+		paramMap.put("storeId", storeId);
+		resultMap.put("data", storeTurnoverService.getData(paramMap));
+		return resultMap;
+	}
+
+	@RequestMapping(value = "/supplierData.do", method = RequestMethod.GET)
+	public @ResponseBody HashMap<String, Object> supplierData(
+			@RequestParam(value = "dayTime", required = false, defaultValue = "") String dayTime,
+			@RequestParam(value = "supplierCode", required = false, defaultValue = "") String supplierCode,
+			@RequestParam(value = "supplierId", required = false, defaultValue = "") String supplierId) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("dayTime", dayTime);
+		paramMap.put("supplierCode", supplierCode);
+		paramMap.put("supplierId", supplierId);
+		resultMap.put("data", supplierTurnoverService.getData(paramMap));
+		return resultMap;
+	}
+
+	@RequestMapping(value = "/spGroupData.do", method = RequestMethod.GET)
+	public @ResponseBody HashMap<String, Object> spGroupData(
+			@RequestParam(value = "dayTime", required = false, defaultValue = "") String dayTime,
+			@RequestParam(value = "spGroupId", required = false, defaultValue = "") Integer spGroupId) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("dayTime", dayTime);
+		paramMap.put("spGroupId", spGroupId);
+		resultMap.put("data", spGroupTurnoverService.getData(paramMap));
+		return resultMap;
+	}
+
+	@RequestMapping(value = "/getOrderDetail.do", method = RequestMethod.GET)
+	public @ResponseBody HashMap<String, Object> getOrderDetail(
+			@RequestParam(value = "orderId", required = false, defaultValue = "") String orderId) {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("data", spOrderDetailService.getOrderDetail(orderId));
+		return resultMap;
+	}
+}

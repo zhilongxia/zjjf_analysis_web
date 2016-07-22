@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>转角店宝 - 数据分析</title>
+    <%@ include file="../../common/head.jsp"%>
+    <%@ include file="../../common/datepicker.jsp"%>
+    <%@ include file="../../common/pagination.jsp"%>
+    <link rel="stylesheet" href="../../resources/css/scorder-goods.css">
+</head>
+<body class="wrap-bd" ng-app="app">
+<div class="mb-default">
+    <a href="" class="crumb">联合采购数据分析</a>
+    <a href="" class="crumb crumb-active">订单报表</a>
+    <a href="" class="crumb crumb-active">订单商品明细</a>
+</div>
+<div class="h2">订单明细</div>
+<div class="order mb-default">
+    <div class="order-info">
+        <p>
+            订单编号：5615131531518
+            <label class="label"></label>
+            <label class="label"></label>
+            订单金额：600,000.0
+        </p>
+        <p>
+            城市：深圳
+            <span class="ml-default mr-default"></span>
+            区域：龙岗
+            <span class="ml-default mr-default"></span>
+            支付方式：微信支付
+            <span class="ml-default mr-default"></span>
+            订单时间：2016-04-02 12:20:20
+            <span class="ml-default mr-default"></span>
+            收货时间：2016-04-02 12:20:25
+        </p>
+    </div>
+    <div class="other-info">
+        <p>
+            <b class="h3">商品信息</b><br>
+            商品SKU数：12
+            <label class="label"></label>
+            商品数量：30
+            <label class="label"></label>
+            订单状态：已派单
+        </p>
+        <p class="delivery">
+            <b class="h3">订单配送信息</b><br>
+            合作商名称：祥发批发部
+            <label class="label"></label>
+            联系方式：15012345678
+            <label class="label"></label>
+            送货地址：深圳市南山区科技软件园A栋
+            <label class="label"></label>
+            配 送 商：德邦物流
+        </p>
+    </div>
+</div>
+<div class="clearfix">
+    <div class="h2 fl">订单商品明细</div>
+    <input type="button" value="导出" class="input input-search-button-white fr">
+</div>
+<div class="table-contain">
+    <pre>
+    <table class="table-list">
+        <thead class="table-thead">
+        <tr>
+            <th colspan="8">订单信息</th>
+            <th colspan="2">商品信息</th>
+            <th colspan="5">订单配送信息</th>
+        </tr>
+        <tr>
+            <th>编号</th>
+            <th>城市</th>
+            <th>区域</th>
+            <th>订单时间</th>
+            <th>支付方式</th>
+            <th>收货时间</th>
+            <th>订单编号</th>
+            <th>订单金额</th>
+            <th>商品SKU数</th>
+            <th>商品数量</th>
+            <th>订单状态</th>
+            <th>合作商名称</th>
+            <th>联系方式</th>
+            <th>送货地址</th>
+            <th>配送商</th>
+        </tr>
+        </thead>
+        <tbody class="table-tbody">
+        <tr>
+            <td>1</td>
+            <td>深圳</td>
+            <td>南山</td>
+            <td>2016-3-10 12:20:30</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+    </pre>
+</div>
+<div ng-controller="paginationCtrl">
+    <tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+</body>
+</html>

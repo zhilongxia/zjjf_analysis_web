@@ -1,0 +1,169 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="zh" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>转角店宝 - 数据分析</title>
+    <%@ include file="../../common/head.jsp"%>
+    <%@ include file="../../common/datepicker.jsp"%>
+    <%@ include file="../../common/pagination.jsp"%>
+
+    <link rel="stylesheet" href="../../resources/css/zjdb-sale.css">
+</head>
+<body class="wrap-bd" ng-app="app">
+<div class="mb-default">
+    <a href="" class="crumb">转角店宝数据分析</a>
+    <a href="" class="crumb crumb-active">销售额分析</a>
+</div>
+<div class="op-section">
+    <select class="select">
+        <option value="">全部城市</option>
+    </select>
+    <select class="select">
+        <option value="">全部办事处</option>
+    </select>
+    <select class="select">
+        <option value="">全部区域</option>
+    </select>
+    <select class="select">
+        <option value="">全部定格</option>
+    </select>
+</div>
+<div class="op-section clearfix">
+    <div class="fl">
+        <input type="text" placeholder="合作商名称" class="input input-search-text">
+        <div class="ml-default dis-ib">
+            查询时间
+            <input id="timeStart" class="input input-date" type="text" ng-model="timeStart" date-picker>
+        </div>
+        <input type="button" class="input input-search-button ml-default" value="搜索">
+        <input type="button" class="input input-search-button-white" value="清除">
+    </div>
+    <div class="fr">
+        <input type="button" class="input input-search-button-white" value="导出">
+    </div>
+</div>
+<div class="total-c clearfix">
+    <div class="total">
+        <div class="title">
+            <div class="ta-l">日交易额汇总</div>
+            <div class="h2">45641648</div>
+            今日交易额
+        </div>
+        <div class="cont">
+            <div class="div">
+                <div class="div-item">
+                    <b>41651000</b>
+                    <br>
+                    昨日交易额
+                </div>
+                <div class="div-item">
+                    <b class="txt-success">12.0%</b>
+                    <br>
+                    日增长率
+                </div>
+            </div>
+            <div class="div">
+                <div class="div-item">
+                    <b>41651000</b>
+                    <br>
+                    今日目标
+                </div>
+                <div class="div-item">
+                    <b class="txt-warn">88.0%</b>
+                    <br>
+                    日完成率
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="total">
+        <div class="title">
+            <div class="ta-l">月交易额汇总</div>
+            <div class="h2">45641648</div>
+            本月交易额
+        </div>
+        <div class="cont">
+            <div class="div">
+                <div class="div-item">
+                    <b>41651000</b>
+                    <br>
+                    上月交易额
+                </div>
+                <div class="div-item">
+                    <b class="txt-success">12.0%</b>
+                    <br>
+                    月增长率
+                </div>
+            </div>
+            <div class="div">
+                <div class="div-item">
+                    <b>41651000</b>
+                    <br>
+                    本月目标
+                </div>
+                <div class="div-item">
+                    <b class="txt-warn">88.0%</b>
+                    <br>
+                    月完成率
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="table-contain">
+    <pre>
+    <table class="table-list">
+        <thead>
+        <tr>
+            <th colspan="6">归属信息</th>
+            <th colspan="5">日交易额</th>
+            <th colspan="5">月交易额</th>
+        </tr>
+        <tr>
+            <th>编号</th>
+            <th>城市</th>
+            <th>办事处</th>
+            <th>负责人</th>
+            <th>区域</th>
+            <th>合作商</th>
+            <th>今日交易额</th>
+            <th>昨日交易额</th>
+            <th>日增长率</th>
+            <th>今日目标</th>
+            <th>日完成率</th>
+            <th>本月累计交易额</th>
+            <th>上月同期</th>
+            <th>月增长率</th>
+            <th>本月目标</th>
+            <th>月完成率</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td>深圳</td>
+            <td>南山</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+    </pre>
+</div>
+<div ng-controller="paginationCtrl">
+    <tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+</body>
+</html>

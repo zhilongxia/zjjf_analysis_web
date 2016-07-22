@@ -1,0 +1,385 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="zh" ng-app="role_edit">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>系统角色添加/编辑</title>
+    <%@ include file="../../common/head.jsp"%>
+    <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/authority.css">
+</head>
+<body class="wrap-bd" ng-controller="roleEditController">
+<input type="hidden" name="name" class="input input-default" value=${id } id="role_id">
+<input type="hidden" name="edit_type" class="input input-default" value=${edit_type } id="edit_type">
+<input type="hidden" name="edit_type" class="input input-default" id="currentPage">
+<div class="mb-default">
+    <a href="" class="crumb">权限设置</a>
+    <a href="" class="crumb">角色管理</a>
+    <a href="" class="crumb crumb-active" onclick="divclick();">角色创建/编辑</a>
+</div>
+<div class="wrap-bd table-border bg">
+
+    <div ng-show="roleDivReadOnly">
+        <label class="label">复制角色：</label>
+        <select class="select" ng-model="selectRole" ng-options="v.id as v.roleName for v in roleList" ng-change="ovverRole()">
+		    <option value="">请选择</option>
+		</select>
+    </div>
+    <p>
+        <label class="label">角色名：</label>
+        <input type="text" name="name" class="input input-default" ng-model="roleName">
+    </p>
+    <p>
+        <label class="label">角色层级：</label>
+        <select class="select" ng-model="selectDataLevel" ng-disabled="dataLevelReadOnly" ng-options="v.code as v.name for v in dataLevelSelect">
+        	<option value="">请选择</option>
+		</select>
+    </p>
+    <div class="clearfix">
+        <label class="fl label">角色权限</label>
+        <div class="fl auth">
+            <div>
+            	<input type="hidden" ng-model="selectAllJson">
+            	<input type="hidden" ng-model="selectPageJson">
+            	<div ng-repeat="menuone in menuTree">
+		            <div class="tab-item" ng-class="{'active':showdetails}" ng-click="showdetails=!showdetails">{{menuone.menuName}}<i class="dir"></i></div>
+		            <div class="tab-content" ng-show="showdetails">
+		                <div class="box clearfix">
+		                    <span class="txt-log mr-default fl">页面选择</span>
+		                    <span class="mr-default fl">
+		                      <!--   <input type="checkbox" name="selected" class="checkbox" ng-click="checkAllPage($event, menuone.id, 'page')"/>全选 -->
+		                    </span>
+		                    <div class="fl list">
+		                        <div class="nav">
+		                        	<span class="item" ng-repeat="level2map in menuone.level2Tree">
+		                        	    <input id="{{level2map.id}}" type="checkbox" ng-checked="isSelectedPage(level2map.id)" ng-click="selectSinglePage(level2map.id)" value="{{level2map.id}}"><span style="cursor:pointer" ng-click="selectPageList(level2map.id)">{{level2map.menuName}}</span>
+		                        	</span>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="box clearfix">
+		                    <span class="txt-log mr-default fl">字段选择</span>
+		                    <span class="mr-default fl">
+		                        <input type="checkbox" name="selected" class="checkbox" ng-click="checkAllPage($event)"/>全选
+		                    </span>
+		                    <div class="fl list">
+		                        <span class="item" ng-repeat="datamap in pageKeyJson">
+ 									<input id="{{datamap.id}}" type="checkbox" value="{{datamap.id}}" ng-checked="isSelectedKey(datamap.id)" ng-click="selectPageKeyJson(datamap.id)" > {{datamap.name}}
+		                        </span>
+		                    </div>
+		                </div>
+		            </div>
+	            </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-default">
+        <label class="label"></label>
+        <button class="button button-ok" ng-click="addRole();">保存</button>
+        <button class="button button-cancel" onclick="window.history.go(-1)">取消</button>
+    </div>
+</div>
+<script>
+
+    var root = '<%=request.getContextPath() %>';
+
+    var loadRoleController_url = root + '/api/authority/role/getRoleEditView.do';
+    var saveRoleInfo_url = root + '/api/authority/role/saveRoleInfo.do';
+    var isExitRole_url = root + '/api/authority/role/isExitRole.do';
+    var getPageKeyByMenuId_url = root + '/api/authority/role/getPageKeyByMenuId.do';
+    
+    var app = angular.module('role_edit',[]); // 第二个参数定义了Module依赖 
+    app.config(function($httpProvider) {
+        $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded';
+        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+        $httpProvider.defaults.transformRequest = [function(data) {
+            var param = function(obj) {
+                var query = '';
+                var name, value, fullSubName, subName, subValue, innerObj, i;
+                for (name in obj) {
+                    value = obj[name];
+                    if (value instanceof Array) {
+                        for (i = 0; i < value.length; ++i) {
+                            subValue = value[i];
+                            fullSubName = name + '[' + i + ']';
+                            innerObj = {};
+                            innerObj[fullSubName] = subValue;
+                            query += param(innerObj) + '&';
+                        }
+                    } else if (value instanceof Object) {
+                        for (subName in value) {
+                            subValue = value[subName];
+                            fullSubName = name + '[' + subName + ']';
+                            innerObj = {};
+                            innerObj[fullSubName] = subValue;
+                            query += param(innerObj) + '&';
+                        }
+                    } else if (value !== undefined && value !== null) {
+                        query += encodeURIComponent(name) + '='
+                                + encodeURIComponent(value) + '&';
+                    }
+                }
+                return query.length ? query.substr(0, query.length - 1) : query;
+            };
+            return angular.isObject(data) && String(data) !== '[object File]'
+                    ? param(data)
+                    : data;
+        }];
+    });
+
+    app.controller('roleEditController', ['$scope', 'roleService', function ($scope, roleService) {
+    	
+    	 $scope.selectAllJson=[];
+    	 
+    	 var alreadyMenuId = function(menuTwoId){
+    		//console.log($scope.selectAllJson);
+    		var flag = -1;
+			angular.forEach($scope.selectAllJson, function(bean, i){
+				if(bean && bean[0] && bean[0]["menuTwoId"] == menuTwoId){
+   	    			flag = i;
+   	    		}
+   			})
+   			return flag;
+    	}
+    	 
+    	$scope.selectPageList = function selectPageList(menuTwoId) {
+     		
+     		var data = {};
+     		data["menuTwoId"] = menuTwoId;
+     		data["roleId"] = document.getElementById("role_id").value;
+     		roleService.getPageKeyByMenuId(data).success(function (result) {
+     			document.getElementById("currentPage").value = menuTwoId;
+ 	    		$scope.pageKeyJson = result.pageKeyJson.pageKeyJson;
+ 	    		var index = alreadyMenuId(menuTwoId);
+ 	    		if(index < 0){
+ 	    			initSelectAllJson(menuTwoId);
+ 	    			index = $scope.selectAllJson.length - 1;
+ 	    			$scope.selectAllJson[index] = result.selectAllJson;
+ 	    		}
+ 	  			console.log("pageKeyJson", result.pageKeyJson.pageKeyJson);
+     			console.log("$scope.selectAllJson", $scope.selectAllJson);
+ 	      		//$scope.selectAllJson= result.selectAllJson;
+ 	        });	
+     	};
+     	
+		$scope.selectSinglePage = function selectSinglePage(menuTwoId) {
+    		
+    		var index = alreadyMenuId(menuTwoId);
+    		if(index < 0){
+    			initSelectAllJson(menuTwoId);
+    		}
+    		var idx = $scope.selectPageJson.indexOf(menuTwoId);
+			if(idx > -1){
+				$scope.selectPageJson.splice(idx, 1);
+				$scope.selectAllJson.remove(index);
+			}else{
+				$scope.selectPageJson.push(menuTwoId);
+			}
+			console.log("selectPageJson", $scope.selectPageJson);
+    	};
+    	
+		$scope.isSelectedPage = function (menuTwoId) {
+			
+       		return $scope.selectPageJson.indexOf(menuTwoId) > -1;
+        };
+    	
+    	$scope.selectPageKeyJson = function selectPageKeyJson(pageKey) {
+    		
+    		var currentPage = document.getElementById("currentPage").value;
+    		var index = alreadyMenuId(currentPage);
+    		if(index < 0){
+    			initSelectAllJson(currentPage);
+    			index = $scope.selectAllJson.length - 1;
+    		}
+    		var idx = $scope.selectAllJson[index][0]["selectPageKeyJson"].indexOf(pageKey);
+			if(idx > -1){
+				$scope.selectAllJson[index][0]["selectPageKeyJson"].splice(idx, 1);
+			}else{
+				$scope.selectAllJson[index][0]["selectPageKeyJson"].push(pageKey);
+			}
+    	};
+    	
+    	
+    	var getPageKeyJsonByMenuId = function(menuId) {
+    		
+    		var data = {};
+    		data["menuTwoId"] = menuId;
+    		data["roleId"] = document.getElementById("role_id").value;
+    		roleService.getPageKeyByMenuId(data).success(function (result) {
+	    		return result;
+	        });	
+    	}
+    	
+    	$scope.checkAllPage = function($event) {
+    		
+    		var list = [];
+    		var menuTwoId = document.getElementById("currentPage").value;
+    		var index = alreadyMenuId(menuTwoId);
+    		if(index < 0){
+    			initSelectAllJson(menuTwoId);
+   				index = $scope.selectAllJson.length - 1;
+    		}
+   			var checkbox = $event.target;
+			angular.forEach($scope.pageKeyJson, function(eachBean, i){
+ 	    		list.push(eachBean.id);
+ 	    		$scope.isSelectedKey(eachBean.id);
+ 	    		$scope.selectPageKeyJson(eachBean.id);
+   	    	})
+   	    	if(checkbox.checked){
+   	    		$scope.selectAllJson[index][0]["selectPageKeyJson"] = angular.copy(list);
+   	    	}else{
+   	    		$scope.selectAllJson[index][0]["selectPageKeyJson"] = [];
+   	    	}
+   		};
+        
+		$scope.isSelectedKey = function (code) {
+        	
+			var menuTwoId = document.getElementById("currentPage").value;
+       		var index = alreadyMenuId(menuTwoId);
+       		if(index >= 0){
+       			return $scope.selectAllJson[index][0]["selectPageKeyJson"].indexOf(code) > -1;
+       		}
+        };
+        
+        var initSelectAllJson = function(menuTwoId){
+        	var temp = {};
+			var _selectPageKeyJson = [];
+			temp["menuTwoId"] = menuTwoId + "";
+			temp["selectPageKeyJson"] = _selectPageKeyJson;
+			if(!$scope.selectAllJson){
+				$scope.selectAllJson = [];
+			}
+			if(!$scope.selectPageJson){
+				$scope.selectPageJson = [];
+			}
+			$scope.selectAllJson.push(temp);
+        }
+        
+    	var loadPage = function(){
+
+    		var edit_type = document.getElementById("edit_type").value;
+			var data = getParam();
+			roleService.loadRole(data).success(function (result) {
+		    	$scope.roleList = result.roleList;
+		    	$scope.dataLevelSelect = [{"code":1, name:"城市"},{"code":2, name:"区域"}];
+		    	if(edit_type && edit_type == 2){
+		    		$scope.roleDivReadOnly = true;
+		    		$scope.dataLevelReadOnly = false;
+		    		$scope.selectRole = result.roleInfo.id;
+		    	}else if(edit_type && edit_type == 1){
+		    		$scope.roleDivReadOnly = false;
+		    		$scope.dataLevelReadOnly = true;
+		    		$scope.selectRole = result.roleInfo.id;
+		    		$scope.roleName = result.roleInfo.roleName;
+		    	}else if(edit_type && edit_type == 0){
+		    		$scope.roleDivReadOnly = true;
+		    		$scope.dataLevelReadOnly = false;
+		    	}
+		    	$scope.selectDataLevel = result.roleInfo.level;
+	    		$scope.menuTree = result.menuTree;
+	    		$scope.selectPageJson= result.selectPageJson;
+	    		$scope.selectAllJson= result.selectAllJson;
+	    		console.log($scope.selectAllJson);
+	        });	
+    	}
+    	
+		$scope.ovverRole = function(){
+    		
+    		var data = {};
+    		data["id"] = $scope.selectRole;
+    		document.getElementById("role_id").value = 0;
+    		roleService.overRole(data).success(function (result) {
+		    	$scope.roleList = result.roleList;
+		    	$scope.dataLevelSelect = [{"code":1, name:"城市"},{"code":2, name:"区域"}];
+		    	if(edit_type && edit_type == 2){
+		    		$scope.selectRole = result.roleInfo.id;
+		    	}else if(edit_type && edit_type == 1){
+		    		$scope.selectRole = result.roleInfo.id;
+		    		$scope.roleName = result.roleInfo.roleName;
+		    	}else if(edit_type && edit_type ==0){
+		    		
+		    	}
+	    		$scope.menuTree = result.menuTree;
+	    		$scope.selectAllJson= result.selectAllJson;
+	        });	
+    	}
+    	
+    	// 保存
+		$scope.addRole = function() {
+    		
+    		if(!check_submit()){
+    			return false;
+    		}
+			var data = getParam();
+			roleService.saveRoleInfo(data).success(function (result) {
+				alert("保存角色成功！");
+				window.history.go(-1);
+            });	
+		}
+        
+    	var getParam = function() {
+    		var paramMap = {};
+    		paramMap["roleName"] = $scope.roleName || null;
+    		paramMap["level"] = $scope.selectDataLevel || 0;
+    		paramMap["id"] = document.getElementById("role_id").value;
+    		paramMap["edit_type"] = document.getElementById("edit_type").value;
+    		paramMap["selectPageJson"] = JSON.stringify($scope.selectPageJson || null);
+    		paramMap["selectPageJsonKey"] = JSON.stringify($scope.selectAllJson || null);
+    		console.log("paramMap", paramMap);
+    		return paramMap;
+    	}	
+    	
+    	// 提交校验
+    	var check_submit = function () {
+    		
+    		if($scope.roleName == null){
+    			alert("您还未输入角色名称！");
+    			return false;
+    		}
+    		if($scope.selectDataLevel == null){
+    			alert("您还未选择角色层级！");
+    			return false;
+    		}
+    		if(!($scope.selectPageJson && $scope.selectPageJson && $scope.selectPageJson.length > 0 && $scope.selectAllJson &&  $scope.selectAllJson.length > 0 && $scope.selectAllJson[0][0]["selectPageKeyJson"] && $scope.selectAllJson[0][0]["selectPageKeyJson"].length > 0)){
+    			alert("您还未选择菜单 和字段权限！");
+    			return false;
+    		}
+    		return true;
+    	}
+        
+        Array.prototype.remove = function(dx){
+        	
+        	if(isNaN(dx)|| dx > this.length){
+        		return false;
+        	}
+        	for (var i = 0, n = 0; i < this.length; i++) {
+				if (this[i] != this[dx]){
+					this[n++] = this[i];
+				}
+			}
+        	this.length -= 1;
+        }
+    	
+		$scope.$watch('$viewContentLoaded', loadPage);
+    }]);
+
+    
+    app.service('roleService', ['$http', function ($http) {
+    	
+        this.loadRole = function (postData) {
+        	return $http.post(loadRoleController_url, postData);
+        }
+        this.saveRoleInfo = function (postData) {
+        	return $http.post(saveRoleInfo_url, postData);
+        }
+        this.isExitRole = function (postData) {
+            return $http.post(isExitRole_url, postData);
+        }
+        this.getPageKeyByMenuId = function (postData) {
+            return $http.post(getPageKeyByMenuId_url, postData);
+        }
+    }]);
+    
+</script>
+</body>
+</html>

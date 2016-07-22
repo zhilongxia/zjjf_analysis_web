@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>转角店宝 - 数据分析</title>
+    <%@ include file="../../common/head.jsp"%>
+    <%@ include file="../../common/datepicker.jsp"%>
+    <%@ include file="../../common/pagination.jsp"%>
+</head>
+<body class="wrap-bd" ng-app="app">
+<div class="mb-default">
+    <a href="" class="crumb">联合采购数据分析</a>
+    <a href="" class="crumb crumb-active">订单明细报表</a>
+</div>
+<div class="op-section">
+    <select class="select">
+        <option value="">全部城市</option>
+    </select>
+    <select class="select">
+        <option value="">全部区域</option>
+    </select>
+    <select class="select">
+        <option value="">全部定格</option>
+    </select>
+    <select class="select">
+        <option value="">全部支付方式</option>
+    </select>
+    <select class="select">
+        <option value="">全部订单状态</option>
+    </select>
+</div>
+<div class="op-section">
+    <input type="text" placeholder="合作商名称/编号" class="input input-search-text">
+    <input type="text" placeholder="配送商" class="input input-search-text">
+</div>
+<div class="op-section clearfix">
+    <div class="fl">
+        订单时间
+        <input id="timeStart" class="input input-date" type="text" ng-model="timeStart" date-picker>
+        至
+        <input id="timeEnd" class="input input-date" type="text" ng-model="timeEnd" date-picker>
+        <span class="pills pills-active ml-default">昨天</span>
+        <span class="pills">最近7天</span>
+        <span class="pills">最近30天</span>
+    </div>
+    <div class="fr">
+        <input type="button" class="input input-search-button" value="确定">
+        <input type="button" class="input input-search-button-white" value="导出">
+    </div>
+</div>
+<div class="op-section" style="border-left: 3px solid #00a0e9;">
+    <span style="font-size: 32px; color: #000">1,800,000.0</span>&nbsp;
+    订单总额
+</div>
+<div class="table-contain">
+    <pre>
+    <table class="table-list">
+        <thead class="table-thead">
+        <tr>
+            <th colspan="8">订单信息</th>
+            <th colspan="2">商品信息</th>
+            <th colspan="5">订单配送信息</th>
+        </tr>
+        <tr>
+            <th>编号</th>
+            <th>城市</th>
+            <th>区域</th>
+            <th>订单时间</th>
+            <th>支付方式</th>
+            <th>收货时间</th>
+            <th>订单编号</th>
+            <th>订单金额</th>
+            <th>商品SKU数</th>
+            <th>商品数量</th>
+            <th>订单状态</th>
+            <th>合作商名称</th>
+            <th>联系方式</th>
+            <th>送货地址</th>
+            <th>配送商</th>
+        </tr>
+        </thead>
+        <tbody class="table-tbody">
+        <tr>
+            <td>1</td>
+            <td>深圳</td>
+            <td>南山</td>
+            <td>2016-3-10 12:20:30</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <a href="scorder-goods.html">12</a>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+    </pre>
+</div>
+<div ng-controller="paginationCtrl">
+    <tm-pagination conf="paginationConf"></tm-pagination>
+</div>
+</body>
+</html>

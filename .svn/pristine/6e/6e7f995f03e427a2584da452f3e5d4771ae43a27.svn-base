@@ -1,0 +1,133 @@
+@charset "utf-8";
+body {
+    overflow: hidden;
+}
+#nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 210px;
+    background: #2c3037;
+    overflow:auto;
+    z-index: 1000;
+    ul {
+        margin: 0;
+        padding: 0;
+        display: inline  /* ie 空一行bug */
+    }
+    li {
+        margin: 0;
+        padding: 0;
+        display: inline  /* ie 空一行bug */
+    }
+    h1 {
+        margin: 0;
+        padding: 0;
+        margin-bottom: 20px;
+        height: 70px;
+        text-align: center;
+        color: white;
+        overflow: hidden;
+        &.logo {
+            background: #0096e0 url(../images/logo.png) no-repeat center
+        }
+    }
+    .category {
+        height: 50px;
+        line-height: 50px;
+        color: white;
+        opacity: .6;
+        cursor: pointer;
+        overflow: hidden;
+        &:hover {
+            background: #33373f;
+            opacity: .6
+        }
+        a {
+            padding-left: 20px;
+            height: 50px;
+            line-height: 50px;
+            display: block;
+            text-decoration: none;
+            color: white
+        }
+    }
+    .category[data-direction] {
+        padding-left: 20px
+    }
+    .active {
+        background: #393e47 url(../images/active.png) center right no-repeat !important;
+        opacity: 1 !important
+    }
+    .active[data-direction] {
+        background: #393e47 !important
+    }
+    .subcategory {
+        display: none;
+        a {
+            padding-left: 45px;
+            height: 36px;
+            line-height: 36px;
+            display: block;
+            font-size: 13px;
+            color: white;
+            text-decoration: none;
+            opacity: .6;
+            &:hover{
+                background: #33373f;
+                opacity: .6
+            }
+        }
+        .active {
+            background: #393e47 url(../images/active.png) center right no-repeat !important;
+            opacity: 1 !important
+        }
+    }
+    .icon {
+        margin-top: -3px;
+        margin-right: 6px;
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        background: url(../images/main-icon.png) center center no-repeat;
+        vertical-align: middle
+    }
+    .icon-global {
+        background-position: 0 0
+    }
+    .icon-goods {
+        background-position: 0 -19px
+    }
+    .icon-order {
+        background-position: 0 -38px
+    }
+    .icon-shop {
+        background-position: 0 -57px
+    }
+    .icon-supplier {
+        background-position: 0 -76px
+    }
+    .icon-purchase {
+        background-position: 0 -95px
+    }
+    .icon-system {
+        background-position: 0 -114px
+    }
+    .icon-direction {
+        float: right;
+        width: 50px;
+        height: 50px;
+        display: inline-block
+    }
+    [data-direction="up"] .icon-direction {
+        background: url(../images/direction-up.png) center no-repeat
+    }
+    [data-direction="down"] .icon-direction {
+        background: url(../images/direction-down.png) center no-repeat
+    }
+}
+#main {
+    margin-left: 210px;
+    overflow-y: hidden;
+    min-width: 716px
+}

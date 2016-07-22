@@ -1,0 +1,39 @@
+.h2 {
+    height: 40px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.h3 {
+    margin: 6px 0;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+}
+.order {
+    @bcolor: #cce5f2;
+    padding: 20px;
+    background: #fff;
+    .order-info {
+        padding: 0 30px;
+        border: 1px solid @bcolor;
+        line-height: 36px;
+        background: #e8f4f9;
+        p {
+            margin: 0;
+            padding: 0;
+            line-height: 36px;
+            &:first-child {
+                border-bottom: 1px solid @bcolor;
+                line-height: 46px;
+                font-weight: bold;
+            }
+        }
+    }
+    .other-info {
+        padding: 0 8px;
+        .delivery {
+            border-top: 1px solid #f1f1f3;
+            padding-top: 12px;
+        }
+    }
+}

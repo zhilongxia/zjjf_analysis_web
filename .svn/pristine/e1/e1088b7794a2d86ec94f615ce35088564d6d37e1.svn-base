@@ -1,0 +1,39 @@
+@border-color: #dad9d9;
+
+.total-c {
+    margin-top: 2px;
+    background: #fff;
+}
+.total {
+    float: left;
+    box-sizing: border-box;
+    width: 50%;
+    height: 169px;
+    text-align: center;
+    &:first-child {
+        border-right: 1px solid @border-color;
+    }
+    .title {
+        padding: 15px 20px;
+        .h2 {
+            font-size: 32px;
+            color: #000;
+        }
+    }
+    .cont {
+        border-top: 1px solid @border-color;
+        padding: 15px 20px;
+        .div {
+            float: left;
+            box-sizing: border-box;
+            padding: 0 20px;
+            width: 50%;
+            .div-item {
+                float: left;
+                box-sizing: border-box;
+                padding: 0 10px;
+                width: 50%;
+            }
+        }
+    }
+}
